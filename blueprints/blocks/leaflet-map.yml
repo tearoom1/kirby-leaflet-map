@@ -1,0 +1,140 @@
+name: Leaflet Map
+icon: map
+preview: fields
+wysiwyg: true
+tabs:
+  content:
+    fields:
+      mapTitle:
+        label: Map Title
+        type: text
+        help: Title to show above the map
+      mapDescription:
+        label: Map Description
+        type: textarea
+        size: small
+        buttons: false
+        help: Short description for the map
+      displayMode:
+        label: Display Mode
+        type: toggles
+        options:
+          embedded: Embedded
+          popup: Popup with Thumbnail
+      thumbnail:
+        when:
+          displayMode: popup
+        label: Map Thumbnail
+        type: files
+        layout: cards
+        multiple: false
+        size: small
+        query: site.find('assets/images').images
+        help: Select a thumbnail image that will be shown before the map is opened
+        image:
+          cover: true
+          ratio: 16/9
+          back: black
+      mapItems:
+        label: Map Locations
+        type: structure
+        help: Add locations to your map
+        columns:
+          title:
+            width: 2/6
+          type:
+            width: 1/6
+          center:
+            width: 1/6
+          lat:
+            width: 1/6
+          lng:
+            width: 1/6
+        fields:
+          title:
+            label: Title
+            type: text
+          description:
+            label: Description
+            type: textarea
+            size: small
+          type:
+            label: Type
+            type: select
+            options:
+              center: Center
+              restaurant: Restaurant
+              cafe: Cafe
+              beach: Beach
+              sight: Point of Interest
+              accommodation: Accommodation
+              vehicleRental: Vehicle Rental
+            width: 1/4
+          size:
+            label: Size
+            type: select
+            options:
+              - value: '1'
+                text: Normal
+              - value: '2'
+                text: Medium
+              - value: '3'
+                text: Big
+            default: 1
+            width: 1/4
+          tooltip:
+            label: Show tooltip
+            type: toggle
+            width: 1/4
+            default: true
+          center:
+            label: Map Center
+            type: toggle
+            width: 1/4
+          lat:
+            label: Latitude
+            type: number
+            step: 0.0000001
+          lng:
+            label: Longitude
+            type: number
+            step: 0.0000001
+          hide:
+            label: Hide this place
+            type: toggle
+            width: 1/4
+      paths:
+        label: Map Paths
+        type: structure
+        help: Add paths to your map
+        columns:
+          title:
+            width: 1/2
+          color:
+            width: 1/2
+        fields:
+          title:
+            label: Path Name
+            type: text
+          color:
+            label: Path Color
+            type: color
+            default: "#0000FF"
+            width: 1/2
+          tooltip:
+            label: Show tooltip
+            type: toggle
+            width: 1/2
+            default: true
+          points:
+            label: Path Points
+            type: structure
+            fields:
+              lat:
+                label: Latitude
+                type: number
+                step: 0.0000001
+              lng:
+                label: Longitude
+                type: number
+                step: 0.0000001

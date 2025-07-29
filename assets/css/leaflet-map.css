@@ -1,0 +1,242 @@
+@import 'leaflet.css';
+
+
+:root {
+  --map-primary: #3498db;
+  --map-accent: #2ecc71;
+  --map-overlay: rgba(0, 0, 0, 0.8);
+  --map-text: var(--color-text);
+  --map-text-light: var(--color-light);
+  --map-bg: var(--color-background, #f8f6f6);
+  --map-font-size-small: 0.8rem;
+  --map-font-size-default: 1rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --map-overlay: rgba(0, 0, 0, 0.9);
+    --map-bg: var(--color-background, #121212);
+  }
+}
+
+.leaflet-map {
+  width: 100%;
+  margin: 2rem 0;
+
+  h3 {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+
+  h4 {
+    font-size: var(--map-font-size-default);
+    margin: 0 0 0.5rem;
+  }
+
+  h5 {
+    font-size: var(--map-font-size-small);
+    margin: 0;
+  }
+
+  .leaflet-map__title {
+    margin-bottom: 1rem;
+  }
+
+  .leaflet-map__description p {
+    margin-bottom: 1.5rem;
+    /*font-size: settings.$font-size-default;*/
+    line-height: 1.5;
+  }
+
+  .leaflet-map__container {
+    position: relative;
+    width: 100%;
+  }
+
+  .leaflet-map__thumbnail {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+
+    .leaflet-map__img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+  }
+
+  .leaflet-map__open-btn {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.75rem 1.5rem;
+    fill: var(--map-primary);
+    color: var(--map-text-light);
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: fill 0.2s ease;
+  }
+
+  .leaflet-map__open-btn:hover, .leaflet-map__open-btn:focus {
+    fill: #2684c3;
+  }
+
+  .leaflet-map__interactive {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    fill: var(--map-overlay);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+  }
+
+  .leaflet-map__interactive[aria-hidden="false"] {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .leaflet-map__fullscreen {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--map-bg);
+    fill: var(--map-bg);
+    border-radius: 8px;
+    overflow: hidden;
+
+    @media screen and (max-width: 1000px) {
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 0;
+    }
+  }
+
+
+  .leaflet-tooltip {
+    background-color: var(--map-bg);
+    /*font-size: settings.$font-size-small;*/
+  }
+
+
+  .leaflet-map__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    fill: var(--map-primary);
+    color: var(--map-text-light);
+
+    h3 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+  }
+
+  .leaflet-map__close-btn {
+    background: none;
+    border: none;
+    color: var(--map-text-light);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .leaflet-map__map {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    //min-height: 300px;
+    min-height: min(100vh, 400px);
+    z-index: 1;
+  }
+
+  /* Leaflet Customizations */
+  .leaflet-map__marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    div {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid white;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+    }
+  }
+
+  .leaflet-map__marker--style-restaurant {
+    fill: #e74c3c;
+    stroke: #f8f6f6;
+  }
+
+  .leaflet-map__marker--style-cafe {
+    fill: #9b59b6;;
+    stroke: #f8f6f6;
+  }
+
+  .leaflet-map__marker--style-beach {
+    fill: #3498db;;
+    stroke: #f8f6f6;
+  }
+
+  .leaflet-map__marker--style-sight {
+    fill: #2ecc71;;
+    stroke: #f8f6f6;
+  }
+
+  .leaflet-map__marker--style-center {
+    fill: #efd736;;
+    stroke: #f8f6f6;
+  }
+
+  .leaflet-map__marker--style-accommodation {
+    fill: #f39c12;;
+    stroke: #f8f6f6;
+  }
+
+  .leaflet-map__marker--style-vehicleRental {
+    fill: #3451c6;;
+    stroke: #f8f6f6;
+  }
+
+  .leaflet-map__popup {
+    p {
+      /*font-size: settings.$font-size-extra-small;*/
+      margin: 0;
+    }
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
