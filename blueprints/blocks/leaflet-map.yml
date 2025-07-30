@@ -86,29 +86,59 @@ tabs:
             type: textarea
             size: small
           type:
-            label: Type
+            label: Location Type
             type: select
             options:
-              center: Center
+              building: Building
+              university: University
+              library: Library
+              museum: Museum
               restaurant: Restaurant
               cafe: Cafe
+              park: Park
+              hospital: Hospital
+              shop: Shop
+              hotel: Hotel
+              monument: Monument
+              theater: Theater
+              sight: Tourist Attraction
+              sports: Sports Facility
+              airport: Airport
+              train: Train Station
+              bus: Bus Station
+              parking: Parking
               beach: Beach
-              sight: Point of Interest
-              accommodation: Accommodation
-              vehicleRental: Vehicle Rental
-            width: 1/4
+              mountain: Mountain
+              lake: Lake
+              forest: Forest
+              church: Church
+              office: Office
+              residence: Residence
+              default: Default
+            width: 1/2
+            help: Determines the icon and style of the map marker
           size:
             label: Size
-            type: select
-            options:
-              - value: '1'
-                text: Normal
-              - value: '2'
-                text: Medium
-              - value: '3'
-                text: Big
+            type: range
+            min: 1
+            max: 5
+            step: 1
             default: 1
-            width: 1/4
+            width: 1/2
+          color:
+            label: Marker Color
+            type: color
+            default: "#3388ff"
+            width: 1/2
+            help: Custom color for this location marker
+          lat:
+            label: Latitude
+            type: text
+            width: 1/2
+          lng:
+            label: Longitude
+            type: text
+            width: 1/2
           tooltip:
             label: Show tooltip
             type: toggle
@@ -118,14 +148,6 @@ tabs:
             label: Map Center
             type: toggle
             width: 1/4
-          lat:
-            label: Latitude
-            type: number
-            step: 0.0000001
-          lng:
-            label: Longitude
-            type: number
-            step: 0.0000001
           hide:
             label: Hide this place
             type: toggle

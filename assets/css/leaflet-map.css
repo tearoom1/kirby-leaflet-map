@@ -181,41 +181,6 @@
     }
   }
 
-  .leaflet-map__marker--style-restaurant {
-    fill: #e74c3c;
-    stroke: #f8f6f6;
-  }
-
-  .leaflet-map__marker--style-cafe {
-    fill: #9b59b6;;
-    stroke: #f8f6f6;
-  }
-
-  .leaflet-map__marker--style-beach {
-    fill: #3498db;;
-    stroke: #f8f6f6;
-  }
-
-  .leaflet-map__marker--style-sight {
-    fill: #2ecc71;;
-    stroke: #f8f6f6;
-  }
-
-  .leaflet-map__marker--style-center {
-    fill: #efd736;;
-    stroke: #f8f6f6;
-  }
-
-  .leaflet-map__marker--style-accommodation {
-    fill: #f39c12;;
-    stroke: #f8f6f6;
-  }
-
-  .leaflet-map__marker--style-vehicleRental {
-    fill: #3451c6;;
-    stroke: #f8f6f6;
-  }
-
   .leaflet-map__popup {
     p {
       /*font-size: settings.$font-size-extra-small;*/

@@ -126,8 +126,11 @@ const addMarkers = (map, locations) => {
 
     let markerSizeVal = location.size ? parseInt(location.size) : 1;
     marker = L.circle([location.lat, location.lng], {
-      className: `leaflet-map__marker leaflet-map__marker--style-${location.type}`,
+      className: `leaflet-map__marker`,
       fillOpacity: 1,
+      fillColor: location.color || '#3388ff',
+      color: '#ffffff',
+      weight: 1,
       radius: 10 + markerSizeVal * 15
     });
 
@@ -181,4 +184,3 @@ const addPaths = (map, paths) => {
 
 // Initialize maps when DOM is ready
 document.addEventListener('DOMContentLoaded', initArillasMap);
-
