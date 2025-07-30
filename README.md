@@ -49,7 +49,6 @@ Once installed, the plugin adds a new "Leaflet Map" block to the block editor. Y
 3. Zoom settings (default, minimum, maximum)
 4. Map locations with various properties:
    - Coordinates (latitude, longitude)
-   - Type (25+ types available including buildings, parks, restaurants, etc.)
    - Size (1-5)
    - Custom marker color
    - Title and description
@@ -57,36 +56,6 @@ Once installed, the plugin adds a new "Leaflet Map" block to the block editor. Y
 5. Paths between locations with:
    - Custom colors
    - Title and tooltip options
-
-## Available Location Types
-
-The plugin includes the following location types:
-- Building
-- University
-- Library
-- Museum
-- Restaurant
-- Cafe
-- Park
-- Hospital
-- Shop
-- Hotel
-- Monument
-- Theater
-- Tourist Attraction
-- Sports Facility
-- Airport
-- Train Station
-- Bus Station
-- Parking
-- Beach
-- Mountain
-- Lake
-- Forest
-- Church
-- Office
-- Residence
-- Default
 
 ## Configuration
 

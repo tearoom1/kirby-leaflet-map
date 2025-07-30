@@ -68,15 +68,17 @@ tabs:
         help: Add locations to your map
         columns:
           title:
-            width: 2/6
-          type:
-            width: 1/6
+            width: 3/8
           center:
-            width: 1/6
+            width: 1/8
+          size:
+            width: 1/8
+          color:
+            width: 1/8
           lat:
-            width: 1/6
+            width: 1/8
           lng:
-            width: 1/6
+            width: 1/8
         fields:
           title:
             label: Title
@@ -85,38 +87,6 @@ tabs:
             label: Description
             type: textarea
             size: small
-          type:
-            label: Location Type
-            type: select
-            options:
-              building: Building
-              university: University
-              library: Library
-              museum: Museum
-              restaurant: Restaurant
-              cafe: Cafe
-              park: Park
-              hospital: Hospital
-              shop: Shop
-              hotel: Hotel
-              monument: Monument
-              theater: Theater
-              sight: Tourist Attraction
-              sports: Sports Facility
-              airport: Airport
-              train: Train Station
-              bus: Bus Station
-              parking: Parking
-              beach: Beach
-              mountain: Mountain
-              lake: Lake
-              forest: Forest
-              church: Church
-              office: Office
-              residence: Residence
-              default: Default
-            width: 1/2
-            help: Determines the icon and style of the map marker
           size:
             label: Size
             type: range
@@ -142,16 +112,16 @@ tabs:
           tooltip:
             label: Show tooltip
             type: toggle
-            width: 1/4
+            width: 1/3
             default: true
           center:
             label: Map Center
             type: toggle
-            width: 1/4
+            width: 1/3
           hide:
             label: Hide this place
             type: toggle
-            width: 1/4
+            width: 1/3
       paths:
         label: Map Paths
         type: structure
