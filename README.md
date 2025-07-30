@@ -88,44 +88,6 @@ The plugin includes the following location types:
 - Residence
 - Default
 
-## Example
-
-Here's an example of a map with several locations and a path:
-
-```yaml
-# In your block content
-mapTitle: MIT Campus Map
-mapDescription: Major buildings and landmarks at MIT
-defaultZoom: 17
-minZoom: 15
-maxZoom: 19
-displayMode: embedded
-mapItems:
-  - lat: 42.3601
-    lng: -71.0942
-    type: university
-    size: 2
-    color: "#CC0000"
-    title: MIT Great Dome
-    description: Building 10, the iconic center of MIT's campus
-    tooltip: true
-  - lat: 42.3615
-    lng: -71.0905
-    type: library
-    color: "#0066CC"
-    title: MIT Media Lab
-    tooltip: true
-paths:
-  - title: Infinite Corridor
-    color: "#ff0000"
-    tooltip: true
-    points:
-      - lat: 42.3601
-        lng: -71.0942
-      - lat: 42.3605
-        lng: -71.0925
-```
-
 ## Configuration
 
 The plugin works out of the box with no configuration needed. All settings are controlled via the block editor interface.
@@ -136,10 +98,14 @@ The plugin supports all modern browsers with Leaflet.js compatibility.
 
 ## License
 
-MIT
+
+This plugin is licensed under the [MIT License](LICENSE)
 
 ## Credits
 
 - [Mathis Koblin](https://www.tearoom.one)
 - Built with [Leaflet.js](https://leafletjs.com/)
 - Uses [OpenStreetMap](https://www.openstreetmap.org/) tiles
+
+
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://coff.ee/tearoom1)
