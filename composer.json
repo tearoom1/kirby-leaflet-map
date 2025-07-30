@@ -1,9 +1,18 @@
 {
   "name": "tearoom1/kirby-leaflet-map",
-  "description": "Kirby Leaflet Map Plugin",
-  "license": "MIT",
+  "description": "Kirby plugin that adds an interactive map block using Leaflet.js",
   "type": "kirby-plugin",
-  "version": "1.1.0",
+  "license": "MIT",
+  "homepage": "https://github.com/tearoom1/kirby-leaflet-map",
+  "version": "1.0.0",
+  "keywords": [
+    "kirby",
+    "panel",
+    "block",
+    "map",
+    "leaflet",
+    "interactive"
+  ],
   "authors": [
     {
       "name": "Mathis Koblin",
@@ -12,6 +21,10 @@
       "role": "Maintainer"
     }
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tearoom1/kirby-leaflet-map.git"
+  },
   "require": {
     "getkirby/composer-installer": "^1.1"
   },
