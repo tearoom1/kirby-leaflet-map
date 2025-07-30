@@ -44,15 +44,21 @@ const initSingleMap = (container) => {
   const defaultCenter = centerLocation ? [centerLocation.lat, centerLocation.lng] : [0, 0];
   let map = null;
 
+  // Get zoom settings from the block data or use defaults
+  const zoomSettings = mapData.zoomSettings || {};
+  const defaultZoom = parseInt(zoomSettings.defaultZoom) || 15;
+  const minZoom = parseInt(zoomSettings.minZoom) || 10;
+  const maxZoom = parseInt(zoomSettings.maxZoom) || 19;
+
 
   function setupMap() {
     // Create map with a slight delay to ensure container is visible
     setTimeout(() => {
       map = L.map(mapElement, {
         center: defaultCenter,
-        zoom: 15,
-        minZoom: 10,
-        maxZoom: 19
+        zoom: defaultZoom,
+        minZoom: minZoom,
+        maxZoom: maxZoom
       });
 
       // Add OpenStreetMap tiles

@@ -43,8 +43,14 @@ $isPopup = $block->displayMode()->value() === 'popup';
 
     <script type="application/json" class="leaflet-map__data">
         {
+          "displayMode": "<?= $block->displayMode() ?>",
           "locations": <?= json_encode($block->mapItems()->toStructure()->toArray()) ?>,
-          "paths": <?= json_encode($block->paths()->toStructure()->toArray()) ?>
+          "paths": <?= json_encode($block->paths()->toStructure()->toArray()) ?>,
+          "zoomSettings": {
+            "defaultZoom": <?= $block->defaultZoom()->or(15) ?>,
+            "minZoom": <?= $block->minZoom()->or(10) ?>,
+            "maxZoom": <?= $block->maxZoom()->or(19) ?>
+          }
         }
     </script>
 </div>
