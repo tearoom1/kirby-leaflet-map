@@ -1,23 +1,23 @@
 {
-	"name": "tearoom1/kirby-leaflet-map",
-	"description": "Kirby Leaflet Map Plugin",
-	"license": "MIT",
-	"type": "kirby-plugin",
-	"version": "1.0.0",
-	"authors": [
-		{
-			"name": "Mathis Koblin",
-			"email": "mail@tearoom.one",
-            "homepage": "https://www.tearoom.one",
-            "role": "Maintainer"
-		}
-	],
-	"require": {
-		"getkirby/composer-installer": "^1.1"
-	},
-	"config": {
-		"allow-plugins": {
-			"getkirby/composer-installer": true
-		}
-	}
+  "name": "tearoom1/kirby-leaflet-map",
+  "description": "Kirby Leaflet Map Plugin",
+  "license": "MIT",
+  "type": "kirby-plugin",
+  "version": "1.1.0",
+  "authors": [
+    {
+      "name": "Mathis Koblin",
+      "email": "mail@tearoom.one",
+      "homepage": "https://www.tearoom.one",
+      "role": "Maintainer"
+    }
+  ],
+  "require": {
+    "getkirby/composer-installer": "^1.1"
+  },
+  "config": {
+    "allow-plugins": {
+      "getkirby/composer-installer": true
+    }
+  }
 }
