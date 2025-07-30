@@ -6,6 +6,8 @@ This is a boilerplate for a Kirby plugin that can be installed via all three [su
 
 You can find a list of Pluginkit variants on the [`master` branch](https://github.com/getkirby/pluginkit/tree/master).
 
+[![Screenshot](screenshot.jpg)](https://github.com/tearoom1/kirby-content-watch)
+
 ****
 
 ## How to use the Pluginkit
