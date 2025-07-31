@@ -131,7 +131,7 @@ const addMarkers = (map, locations) => {
       fillColor: location.color || '#3388ff',
       color: '#ffffff',
       weight: 1,
-      radius: 10 + markerSizeVal * 15
+      radius: 5 + markerSizeVal * 10
     });
 
     if (location.title || location.description) {
