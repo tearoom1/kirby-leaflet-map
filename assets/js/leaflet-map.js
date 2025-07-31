@@ -120,7 +120,7 @@ const addMarkers = (map, locations) => {
   if (!locations || !locations.length) return;
 
   locations.forEach(location => {
-    if (!location.lat || !location.lng || !location.type || location.hide === 'true') return;
+    if (!location.lat || !location.lng || location.hide === 'true') return;
 
     var marker;
 
