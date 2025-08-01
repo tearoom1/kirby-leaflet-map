@@ -1,8 +1,6 @@
 <?php
 
-load([
-    'TearoomOne\\LeafletMap\\Utils' => 'src/Utils.php',
-], __DIR__);
+@include_once __DIR__ . '/vendor/autoload.php';
 
 Kirby::plugin('tearoom1/kirby-leaflet-map', [
     'blueprints' => [
