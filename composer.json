@@ -21,6 +21,10 @@
             "role": "Maintainer"
         }
     ],
+    "support": {
+        "docs": "https://github.com/tearoom1/kirby-leaflet-map/blob/main/README.md",
+        "source": "https://github.com/tearoom1/kirby-leaflet-map"
+    },
     "repository": {
         "type": "git",
         "url": "https://github.com/tearoom1/kirby-leaflet-map.git"
