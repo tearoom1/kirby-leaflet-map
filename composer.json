@@ -1,46 +1,46 @@
 {
-    "name": "tearoom1/kirby-leaflet-map",
-    "description": "Kirby plugin that adds an interactive map block using Leaflet.js",
-    "type": "kirby-plugin",
-    "license": "MIT",
-    "homepage": "https://github.com/tearoom1/kirby-leaflet-map",
-    "version": "1.1.0",
-    "keywords": [
-        "kirby",
-        "panel",
-        "block",
-        "map",
-        "leaflet",
-        "interactive"
-    ],
-    "authors": [
-        {
-            "name": "Mathis Koblin",
-            "email": "mail@tearoom.one",
-            "homepage": "https://www.tearoom.one",
-            "role": "Maintainer"
-        }
-    ],
-    "support": {
-        "docs": "https://github.com/tearoom1/kirby-leaflet-map/blob/main/README.md",
-        "source": "https://github.com/tearoom1/kirby-leaflet-map"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/tearoom1/kirby-leaflet-map.git"
-    },
-    "require": {
-        "getkirby/composer-installer": "^1.1"
-    },
-    "autoload": {
-        "psr-4": {
-            "TearoomOne\\LeafletMap\\": "src/"
-        }
-    },
-    "config": {
-        "optimize-autoloader": true,
-        "allow-plugins": {
-            "getkirby/composer-installer": true
-        }
+  "name": "tearoom1/kirby-leaflet-map",
+  "description": "Kirby plugin that adds an interactive map block using Leaflet.js",
+  "type": "kirby-plugin",
+  "license": "MIT",
+  "homepage": "https://github.com/tearoom1/kirby-leaflet-map",
+  "version": "1.2.0",
+  "keywords": [
+    "kirby",
+    "panel",
+    "block",
+    "map",
+    "leaflet",
+    "interactive"
+  ],
+  "authors": [
+    {
+      "name": "Mathis Koblin",
+      "email": "mail@tearoom.one",
+      "homepage": "https://www.tearoom.one",
+      "role": "Maintainer"
     }
+  ],
+  "support": {
+    "docs": "https://github.com/tearoom1/kirby-leaflet-map/blob/main/README.md",
+    "source": "https://github.com/tearoom1/kirby-leaflet-map"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tearoom1/kirby-leaflet-map.git"
+  },
+  "require": {
+    "getkirby/composer-installer": "^1.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "TearoomOne\\LeafletMap\\": "src/"
+    }
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "allow-plugins": {
+      "getkirby/composer-installer": true
+    }
+  }
 }
