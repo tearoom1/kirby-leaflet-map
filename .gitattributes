@@ -23,3 +23,6 @@ CHANGELOG.md export-ignore
 # Tests
 /tests/ export-ignore
 phpunit.xml export-ignore
+
+# Plugin directory
+cover.jpg export-ignore
