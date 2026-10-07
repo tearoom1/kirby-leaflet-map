@@ -1,3 +1,16 @@
+## [1.3.0](https://github.com/tearoom1/kirby-leaflet-map/compare/v1.2.0...v1.3.0) (2026-10-07)
+
+
+### Features
+
+* location picker, address search, tile proxy and privacy options ([fb563ea](https://github.com/tearoom1/kirby-leaflet-map/commit/fb563ea3a768039775382c3a98a6fa8e3cbab5ab))
+* path editor, automatic map view and label options ([e891683](https://github.com/tearoom1/kirby-leaflet-map/commit/e8916831aac55107cf6703fc473e3bbed414a851))
+
+
+### Bug Fixes
+
+* sign tile proxy tokens in a way that works with Kirby 4 ([2b9fc55](https://github.com/tearoom1/kirby-leaflet-map/commit/2b9fc551d3f01c7134c86050084ab5bb371c14de))
+
 ## [1.2.0](https://github.com/tearoom1/kirby-leaflet-map/compare/v1.1.0...v1.2.0) (2026-10-07)
 
 
