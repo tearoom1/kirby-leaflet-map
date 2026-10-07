@@ -21,8 +21,13 @@ const initSingleMap = (container) => {
   const interactive = container.querySelector('.leaflet-map__interactive');
 
   const locations = mapData.locations || [];
-  const centerLocation = locations.find(location => location.center) || locations[0];
-  const defaultCenter = centerLocation ? [centerLocation.lat, centerLocation.lng] : [0, 0];
+  const paths = mapData.paths || [];
+  // an explicit center wins, otherwise the map shows all locations and paths
+  const centerLocation = locations.find(location => location.center);
+  const points = [
+    ...locations.map(location => [location.lat, location.lng]),
+    ...paths.flatMap(path => path.points)
+  ];
 
   const zoom = mapData.zoom || {};
   const tiles = mapData.tiles || {};
@@ -32,11 +37,26 @@ const initSingleMap = (container) => {
     // Create map with a slight delay to ensure container is visible
     setTimeout(() => {
       map = L.map(mapElement, {
-        center: defaultCenter,
-        zoom: zoom.default || 15,
         minZoom: zoom.min || 10,
-        maxZoom: zoom.max || 19
+        maxZoom: zoom.max || 19,
+        // half steps let the automatic view fit the locations more closely
+        zoomSnap: 0.5
       });
+
+      if (centerLocation || points.length < 2) {
+        const center = centerLocation ? [centerLocation.lat, centerLocation.lng] : (points[0] || [0, 0]);
+        map.setView(center, zoom.default || 15);
+      } else {
+        // allow zooming out below the minimum if that's needed to show all locations
+        // extra room at the top for the tooltips above the markers
+        const padding = { paddingTopLeft: [30, 50], paddingBottomRight: [30, 20] };
+        const fitZoom = map.getBoundsZoom(points, false, L.point(60, 70));
+        if (fitZoom < map.getMinZoom()) {
+          map.setMinZoom(fitZoom);
+        }
+        // never zoom in further than the default zoom when fitting
+        map.fitBounds(points, { ...padding, maxZoom: zoom.default || 15 });
+      }
 
       L.tileLayer(tiles.url || 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: tiles.attribution || '',
@@ -45,13 +65,20 @@ const initSingleMap = (container) => {
         referrerPolicy: 'strict-origin-when-cross-origin'
       }).addTo(map);
 
-      addMarkers(map, locations);
-      addPaths(map, mapData.paths || []);
+      const labels = mapData.labels || 'individual';
+      addMarkers(map, locations, labels);
+      addPaths(map, paths, labels);
+
+      // permanent tooltips overlap when zoomed out far, hide them there
+      const tooltipZoom = map.getZoom() - 1.5;
+      const toggleTooltips = () => mapElement.classList.toggle('leaflet-map--far', map.getZoom() < tooltipZoom);
+      map.on('zoomend', toggleTooltips);
 
       // Force a resize to ensure map renders correctly
       setTimeout(() => map.invalidateSize(), 100);
     }, 50);
   };
+
 
   const openMap = () => {
     interactive.setAttribute('aria-hidden', 'false');
@@ -104,14 +131,17 @@ const popupContent = (title, descriptionHtml) => {
   const wrapper = document.createElement('div');
   wrapper.className = 'leaflet-map__popup';
 
+  // no heading elements: they would pick up the heading styles of the website
   if (title) {
-    const heading = document.createElement('h4');
+    const heading = document.createElement('strong');
+    heading.className = 'leaflet-map__popup-title';
     heading.textContent = title;
     wrapper.appendChild(heading);
   }
 
   if (descriptionHtml) {
-    const text = document.createElement('p');
+    const text = document.createElement('div');
+    text.className = 'leaflet-map__popup-text';
     text.innerHTML = descriptionHtml;
     wrapper.appendChild(text);
   }
@@ -120,49 +150,63 @@ const popupContent = (title, descriptionHtml) => {
 };
 
 const tooltipContent = (title) => {
-  const heading = document.createElement('h5');
-  heading.textContent = title;
-  return heading;
+  const label = document.createElement('span');
+  label.className = 'leaflet-map__label';
+  label.textContent = title;
+  return label;
 };
 
-const addMarkers = (map, locations) => {
+// label above the marker: always visible, on hover only or none (map setting)
+const bindLabel = (layer, title, individual, mode) => {
+  if (!title || mode === 'none') return;
+
+  const permanent = mode === 'always' || (mode === 'individual' && individual);
+
+  layer.bindTooltip(tooltipContent(title), {
+    permanent,
+    direction: 'top',
+    offset: [0, -10],
+    className: permanent ? 'leaflet-map__tooltip is-permanent' : 'leaflet-map__tooltip'
+  });
+};
+
+const addMarkers = (map, locations, labels) => {
   locations.forEach(location => {
-    const marker = L.circle([location.lat, location.lng], {
+    // radius in pixels, so markers keep their size at every zoom level
+    const marker = L.circleMarker([location.lat, location.lng], {
       className: 'leaflet-map__marker',
       fillOpacity: 1,
       fillColor: location.color || '#3388ff',
       color: '#ffffff',
-      weight: 1,
-      radius: 5 + (location.size || 1) * 10
+      weight: 2,
+      radius: 5 + (location.size || 1) * 2
     });
 
     if (location.title || location.description) {
       marker.bindPopup(popupContent(location.title, location.description));
-
-      if (location.tooltip && location.title) {
-        marker.bindTooltip(tooltipContent(location.title), {permanent: true, direction: 'top', offset: [0, -10]});
-      }
     }
+
+    bindLabel(marker, location.title, location.tooltip, labels);
 
     marker.addTo(map);
   });
 };
 
-const addPaths = (map, paths) => {
+const addPaths = (map, paths, labels) => {
   paths.forEach(path => {
     const polyline = L.polyline(path.points, {
       color: path.color || '#3388ff',
-      weight: 2,
-      opacity: 0.7
+      weight: 4,
+      opacity: 0.85,
+      lineCap: 'round',
+      lineJoin: 'round'
     }).addTo(map);
 
     if (path.title) {
       polyline.bindPopup(popupContent(path.title));
-
-      if (path.tooltip) {
-        polyline.bindTooltip(tooltipContent(path.title), {permanent: true, direction: 'top', offset: [0, -10]});
-      }
     }
+
+    bindLabel(polyline, path.title, path.tooltip, labels);
   });
 };
 

@@ -69,9 +69,19 @@ class Utils
         $paths = [];
         foreach ($block->paths()->toStructure() as $path) {
             $points = [];
-            foreach ($path->points()->toStructure() as $point) {
-                if (($coordinates = self::coordinates($point)) !== null) {
-                    $points[] = [$coordinates['lat'], $coordinates['lng']];
+            // the path editor stores a list of points, older content a points structure
+            $line = $path->line()->yaml();
+            if ($line !== []) {
+                foreach ($line as $point) {
+                    if (is_numeric($point['lat'] ?? null) && is_numeric($point['lng'] ?? null)) {
+                        $points[] = [(float)$point['lat'], (float)$point['lng']];
+                    }
+                }
+            } else {
+                foreach ($path->points()->toStructure() as $point) {
+                    if (($coordinates = self::coordinates($point)) !== null) {
+                        $points[] = [$coordinates['lat'], $coordinates['lng']];
+                    }
                 }
             }
 
@@ -98,10 +108,15 @@ class Utils
             foreach ($paths as $path) {
                 $points = array_merge($points, $path['points']);
             }
-            $tiles['url'] = TileProxy::urlTemplate($points, $minZoom, $maxZoom);
+            // zoom 0 upwards: the map may zoom out further to show all locations
+            $tiles['url'] = TileProxy::urlTemplate($points, 0, $maxZoom);
         }
 
+        $labels = $block->labels()->value();
+
         return [
+            // individual: per location toggle, always, hover or none
+            'labels'    => in_array($labels, ['always', 'hover', 'none'], true) ? $labels : 'individual',
             'locations' => $locations,
             'paths'     => $paths,
             'zoom'      => [

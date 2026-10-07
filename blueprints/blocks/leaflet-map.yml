@@ -44,7 +44,7 @@ tabs:
         max: 19
         step: 1
         width: 1/3
-        help: Initial zoom level when the map loads
+        help: Zoom level around the map center. Without a center, the map zooms in at most this far to show all locations.
       minZoom:
         label: Minimum Zoom
         type: range
@@ -63,6 +63,17 @@ tabs:
         step: 1
         width: 1/3
         help: Maximum allowed zoom level (closer in)
+      labels:
+        label: Labels
+        type: select
+        # an empty value means: set per location
+        placeholder: Set per location
+        width: 1/2
+        options:
+          always: Always show
+          hover: Show on hover
+          none: Only in the popup
+        help: Names of the locations and paths on the map
       mapItems:
         label: Map Locations
         type: structure
@@ -110,14 +121,16 @@ tabs:
           lng:
             type: hidden
           tooltip:
-            label: Show tooltip
+            label: Always show label
             type: toggle
             width: 1/3
             default: true
+            help: Only if the map labels are set per location. Otherwise the title appears on hover
           center:
             label: Map Center
             type: toggle
             width: 1/3
+            help: Center the map here. Without a center, the map shows all locations.
           hide:
             label: Hide this place
             type: toggle
@@ -141,22 +154,15 @@ tabs:
             default: "#0000FF"
             width: 1/2
           tooltip:
-            label: Show tooltip
+            label: Always show label
             type: toggle
             width: 1/2
             default: true
+            help: Only if the map labels are set per location. Otherwise the name appears on hover
+          line:
+            label: Path
+            type: leaflet-path
+            translate: false
+          # Former points structure, still read for existing content
           points:
-            label: Path Points
-            type: structure
-            columns:
-              location: true
-            fields:
-              location:
-                label: Location
-                type: leaflet-location
-                translate: false
-              # Former coordinate fields, still read for existing content
-              lat:
-                type: hidden
-              lng:
-                type: hidden
+            type: hidden

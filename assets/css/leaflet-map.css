@@ -23,20 +23,7 @@
   width: 100%;
   margin: 2rem 0;
 
-  h3 {
-    margin: 0;
-    font-size: 1.2rem;
-  }
 
-  h4 {
-    font-size: var(--map-font-size-default);
-    margin: 0 0 0.5rem;
-  }
-
-  h5 {
-    font-size: var(--map-font-size-small);
-    margin: 0;
-  }
 
   .leaflet-map__title {
     margin-bottom: 1rem;
@@ -129,9 +116,28 @@
   }
 
 
-  .leaflet-tooltip {
-    background-color: var(--map-bg);
-    /*font-size: settings.$font-size-small;*/
+  /* use the text font of the website instead of Leaflet's default */
+  .leaflet-container {
+    font-family: inherit;
+  }
+
+  .leaflet-map__tooltip {
+    padding: 0.2rem 0.5rem;
+    border: none;
+    border-radius: 4px;
+    background: var(--map-bg);
+    color: var(--map-text);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .leaflet-map__tooltip::before {
+    border-top-color: var(--map-bg);
+  }
+
+  .leaflet-map__label {
+    font-size: var(--map-font-size-small);
+    font-weight: 600;
+    white-space: nowrap;
   }
 
 
@@ -168,6 +174,10 @@
     height: 100%;
     min-height: min(100vh, 400px);
     z-index: 1;
+  }
+
+  .leaflet-map--far .leaflet-tooltip {
+    display: none;
   }
 
   /* Shown instead of the map until the visitor loads it (loadOnClick) */
@@ -215,9 +225,17 @@
     }
   }
 
-  .leaflet-map__popup {
+  .leaflet-map__popup-title {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: var(--map-font-size-default);
+  }
+
+  .leaflet-map__popup-text {
+    font-size: var(--map-font-size-small);
+    line-height: 1.4;
+
     p {
-      /*font-size: settings.$font-size-extra-small;*/
       margin: 0;
     }
   }

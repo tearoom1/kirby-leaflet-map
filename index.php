@@ -46,6 +46,30 @@ Kirby::plugin('tearoom1/kirby-leaflet-map', [
             ],
             'save' => fn ($value) => is_array($value) && isset($value['lat'], $value['lng']) ? $value : null,
         ],
+        // Path editor: click on the map to add points, drag or click them to edit
+        'leaflet-path' => [
+            'props' => [
+                'value' => function ($value = null) {
+                    $value = is_array($value) ? $value : Data::decode($value, 'yaml');
+
+                    return array_values(array_filter(array_map(
+                        fn ($point) => is_numeric($point['lat'] ?? null) && is_numeric($point['lng'] ?? null)
+                            ? ['lat' => (float)$point['lat'], 'lng' => (float)$point['lng']]
+                            : null,
+                        is_array($value) ? $value : []
+                    )));
+                },
+                'center' => fn (array|null $center = null) => $center ?? option('tearoom1.leaflet-map.panel.center', [20, 0]),
+                'zoom' => fn (int|null $zoom = null) => $zoom ?? option('tearoom1.leaflet-map.panel.zoom', 2),
+            ],
+            'computed' => [
+                'search' => fn () => Geocoder::enabled(),
+                'tiles' => fn () => TileProxy::enabled()
+                    ? ['url' => TileProxy::panelUrlTemplate()] + Utils::tiles()
+                    : Utils::tiles(),
+            ],
+            'save' => fn ($value) => is_array($value) && $value !== [] ? array_values($value) : null,
+        ],
     ],
     'api' => [
         'routes' => [
@@ -78,6 +102,11 @@ Kirby::plugin('tearoom1/kirby-leaflet-map', [
             'tearoom1.leaflet-map.location.clear' => 'Remove location',
             'tearoom1.leaflet-map.location.search' => 'Search address …',
             'tearoom1.leaflet-map.location.noResults' => 'No results',
+            'tearoom1.leaflet-map.path.points' => 'points',
+            'tearoom1.leaflet-map.path.help' => 'Click on the map to add a point, drag a point to move it, click it to remove it',
+            'tearoom1.leaflet-map.path.undo' => 'Remove last',
+            'tearoom1.leaflet-map.path.clear' => 'Remove all points',
+            'tearoom1.leaflet-map.path.remove' => 'Click to remove, drag to move',
         ],
         'de' => [
             'tearoom1.leaflet-map.map' => 'Karte',
@@ -89,6 +118,11 @@ Kirby::plugin('tearoom1/kirby-leaflet-map', [
             'tearoom1.leaflet-map.location.clear' => 'Ort entfernen',
             'tearoom1.leaflet-map.location.search' => 'Adresse suchen …',
             'tearoom1.leaflet-map.location.noResults' => 'Keine Treffer',
+            'tearoom1.leaflet-map.path.points' => 'Punkte',
+            'tearoom1.leaflet-map.path.help' => 'Klicke in die Karte, um einen Punkt anzuhängen, ziehe einen Punkt, um ihn zu verschieben, klicke ihn an, um ihn zu entfernen',
+            'tearoom1.leaflet-map.path.undo' => 'Letzten entfernen',
+            'tearoom1.leaflet-map.path.clear' => 'Alle Punkte entfernen',
+            'tearoom1.leaflet-map.path.remove' => 'Klicken zum Entfernen, ziehen zum Verschieben',
         ],
     ],
 ]);

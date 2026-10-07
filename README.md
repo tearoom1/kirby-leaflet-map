@@ -7,9 +7,11 @@ A map block for Kirby with markers and paths, based on [Leaflet](https://leaflet
 ## Features
 
 - Map block for Kirby's block and layout editor
-- Markers with title, description, size and color, optional permanent tooltips
-- Paths between points with their own color and tooltip
+- Markers with title, description, size and color
+- Paths with their own color, drawn directly on the map in the panel
 - Location picker in the panel: search an address, click on the map or drag the marker
+- The map automatically shows all locations and paths, or centers on a chosen location
+- Labels always visible, on hover or only in the popup, per map or per location
 - Embedded map or a thumbnail that opens the map in an overlay
 - Default, minimum and maximum zoom per map
 - Privacy friendly: tile proxy on your own server or a "load map" button before anything is loaded
@@ -60,8 +62,23 @@ Each map block can be configured in the panel:
 1. Title and description
 2. Display mode: embedded or a thumbnail that opens the map in an overlay
 3. Zoom levels: default, minimum and maximum
-4. Locations: title, description, size (1–5), color, tooltip, hidden, map center
-5. Paths: name, color, tooltip and the points of the path
+4. Labels: set per location, always visible, on hover or only in the popup
+5. Locations: title, description, size (1–5), color, label, hidden, map center
+6. Paths: name, color, label and the line drawn on the map
+
+Without a location marked as map center, the map shows all locations and paths. It zooms in at most to the default zoom and out below the minimum zoom if needed.
+
+The title of a location appears as a label above the marker and in the popup when the marker is clicked, the description only in the popup.
+
+### Path editor
+
+Paths are drawn with the `leaflet-path` field: click on the map to add a point, drag a point to move it and click it to remove it. It stores a list of points:
+
+```php
+foreach ($page->route()->yaml() as $point) {
+    echo $point['lat'] . ', ' . $point['lng'];
+}
+```
 
 ### Location picker
 
