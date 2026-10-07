@@ -235,7 +235,10 @@ class TileProxy
 
     protected static function sign(string $payload): string
     {
-        return substr(hash_hmac('sha256', $payload, kirby()->contentToken(null, 'leaflet-map-tiles')), 0, 16);
+        // same secret Kirby uses for its content tokens (works with Kirby 4 and 5)
+        $salt = option('content.salt') ?? kirby()->root('content');
+
+        return substr(hash_hmac('sha256', 'leaflet-map-tiles|' . $payload, (string)$salt), 0, 16);
     }
 
     protected static function tileX(float $lng, int $z): int
