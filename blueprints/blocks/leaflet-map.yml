@@ -29,8 +29,9 @@ tabs:
         layout: cards
         multiple: false
         size: small
-        query: site.find('assets/images').images
-        help: Select a thumbnail image that will be shown before the map is opened
+        query: page.images
+        uploads: true
+        help: Image shown before the map is opened
         image:
           cover: true
           ratio: 16/9
@@ -75,10 +76,8 @@ tabs:
             width: 1/8
           color:
             width: 1/8
-          lat:
-            width: 1/8
-          lng:
-            width: 1/8
+          location:
+            width: 2/8
         fields:
           title:
             label: Title
@@ -101,14 +100,15 @@ tabs:
             default: "#3388ff"
             width: 1/2
             help: Custom color for this location marker
+          location:
+            label: Location
+            type: leaflet-location
+            translate: false
+          # Former coordinate fields, still read for existing content
           lat:
-            label: Latitude
-            type: text
-            width: 1/2
+            type: hidden
           lng:
-            label: Longitude
-            type: text
-            width: 1/2
+            type: hidden
           tooltip:
             label: Show tooltip
             type: toggle
@@ -148,12 +148,15 @@ tabs:
           points:
             label: Path Points
             type: structure
+            columns:
+              location: true
             fields:
+              location:
+                label: Location
+                type: leaflet-location
+                translate: false
+              # Former coordinate fields, still read for existing content
               lat:
-                label: Latitude
-                type: number
-                step: 0.0000001
+                type: hidden
               lng:
-                label: Longitude
-                type: number
-                step: 0.0000001
+                type: hidden

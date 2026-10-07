@@ -1,0 +1,11 @@
+{
+  "name": "kirby-leaflet-map",
+  "private": true,
+  "scripts": {
+    "dev": "npx -y kirbyup js/index.js --watch",
+    "build": "npx -y kirbyup js/index.js"
+  },
+  "dependencies": {
+    "leaflet": "^1.9.4"
+  }
+}

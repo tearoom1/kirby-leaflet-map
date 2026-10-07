@@ -5,8 +5,8 @@
   --map-primary: #3498db;
   --map-accent: #2ecc71;
   --map-overlay: rgba(0, 0, 0, 0.8);
-  --map-text: var(--color-text);
-  --map-text-light: var(--color-light);
+  --map-text: var(--color-text, #1d1d1d);
+  --map-text-light: var(--color-light, #ffffff);
   --map-bg: var(--color-background, #f8f6f6);
   --map-font-size-small: 0.8rem;
   --map-font-size-default: 1rem;
@@ -59,11 +59,17 @@
     overflow: hidden;
     cursor: pointer;
 
-    .leaflet-map__img {
+    .leaflet-map__thumbnail-img {
       display: block;
       width: 100%;
       height: auto;
     }
+  }
+
+  /* Without a thumbnail the button is shown on its own */
+  .leaflet-map__thumbnail:not(:has(img)) .leaflet-map__open-btn {
+    position: static;
+    transform: none;
   }
 
   .leaflet-map__open-btn {
@@ -72,7 +78,7 @@
     left: 50%;
     transform: translateX(-50%);
     padding: 0.75rem 1.5rem;
-    fill: var(--map-primary);
+    background: var(--map-primary);
     color: var(--map-text-light);
     border: none;
     border-radius: 4px;
@@ -81,8 +87,8 @@
     transition: fill 0.2s ease;
   }
 
-  .leaflet-map__open-btn:hover, .leaflet-map__open-btn:focus {
-    fill: #2684c3;
+  .leaflet-map__open-btn:hover, .leaflet-map__open-btn:focus-visible {
+    background: #2684c3;
   }
 
   .leaflet-map__interactive {
@@ -92,7 +98,7 @@
     width: 100%;
     height: 100%;
     z-index: 9999;
-    fill: var(--map-overlay);
+    background: var(--map-overlay);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -112,7 +118,6 @@
     display: flex;
     flex-direction: column;
     background: var(--map-bg);
-    fill: var(--map-bg);
     border-radius: 8px;
     overflow: hidden;
 
@@ -135,7 +140,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 0.75rem 1rem;
-    fill: var(--map-primary);
+    background: var(--map-primary);
     color: var(--map-text-light);
 
     h3 {
@@ -161,9 +166,38 @@
     flex: 1;
     width: 100%;
     height: 100%;
-    //min-height: 300px;
     min-height: min(100vh, 400px);
     z-index: 1;
+  }
+
+  /* Shown instead of the map until the visitor loads it (loadOnClick) */
+  .leaflet-map__consent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    height: 100%;
+    min-height: inherit;
+    padding: 1.5rem;
+    text-align: center;
+    background: var(--map-bg);
+    color: var(--map-text);
+
+    p {
+      max-width: 40ch;
+      margin: 0;
+    }
+  }
+
+  .leaflet-map__load-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    background: var(--map-primary);
+    color: var(--map-text-light);
+    font-weight: bold;
+    cursor: pointer;
   }
 
   /* Leaflet Customizations */
@@ -186,22 +220,5 @@
       /*font-size: settings.$font-size-extra-small;*/
       margin: 0;
     }
-  }
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-
-  50% {
-    transform: scale(1.2);
-    opacity: 0.8;
-  }
-
-  100% {
-    transform: scale(1);
-    opacity: 1;
   }
 }

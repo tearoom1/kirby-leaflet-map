@@ -3,147 +3,144 @@
  * Uses Leaflet.js
  */
 
-const initArillasMap = () => {
-  const mapContainers = document.querySelectorAll('.leaflet-map');
-
-  if (!mapContainers.length) return;
-
-  // Load Leaflet CSS
-  // const leafletCss = document.createElement('link');
-  // leafletCss.rel = 'stylesheet';
-  // leafletCss.href = '/assets/leaflet/leaflet.css';
-  // document.head.appendChild(leafletCss);
-  // import('/leaflet/dist/leaflet.css')
-
-  // Load Leaflet JS
-  mapContainers.forEach(container => {
+const initLeafletMaps = () => {
+  document.querySelectorAll('.leaflet-map').forEach(container => {
     initSingleMap(container);
   });
-}
+};
 
 const initSingleMap = (container) => {
-  // Data
   const dataElement = container.querySelector('.leaflet-map__data');
   if (!dataElement) return;
 
   const mapData = JSON.parse(dataElement.textContent);
-  const blockId = container.id;
   const mapElement = container.querySelector('.leaflet-map__map');
-  const thumbnail = container.querySelector('.leaflet-map__thumbnail');
   const openBtn = container.querySelector('.leaflet-map__thumbnail');
   const closeBtn = container.querySelector('.leaflet-map__close-btn');
+  const loadBtn = container.querySelector('.leaflet-map__load-btn');
   const interactive = container.querySelector('.leaflet-map__interactive');
 
-  var centerLocation = mapData.locations.find(location => location.center === 'true');
-  if (!centerLocation) {
-    // take first location as center
-    centerLocation = mapData.locations[0];
-  }
-
-  // Arillas approximate center coordinates
+  const locations = mapData.locations || [];
+  const centerLocation = locations.find(location => location.center) || locations[0];
   const defaultCenter = centerLocation ? [centerLocation.lat, centerLocation.lng] : [0, 0];
+
+  const zoom = mapData.zoom || {};
+  const tiles = mapData.tiles || {};
   let map = null;
 
-  // Get zoom settings from the block data or use defaults
-  const zoomSettings = mapData.zoomSettings || {};
-  const defaultZoom = parseInt(zoomSettings.defaultZoom) || 15;
-  const minZoom = parseInt(zoomSettings.minZoom) || 10;
-  const maxZoom = parseInt(zoomSettings.maxZoom) || 19;
-
-
-  function setupMap() {
+  const setupMap = () => {
     // Create map with a slight delay to ensure container is visible
     setTimeout(() => {
       map = L.map(mapElement, {
         center: defaultCenter,
-        zoom: defaultZoom,
-        minZoom: minZoom,
-        maxZoom: maxZoom
+        zoom: zoom.default || 15,
+        minZoom: zoom.min || 10,
+        maxZoom: zoom.max || 19
       });
 
-      // Add OpenStreetMap tiles
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      L.tileLayer(tiles.url || 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: tiles.attribution || '',
+        maxZoom: tiles.maxZoom || 19,
+        // tile servers like OSM require a referrer, even if the site restricts it
+        referrerPolicy: 'strict-origin-when-cross-origin'
       }).addTo(map);
 
-      // Add markers
-      addMarkers(map, mapData.locations);
-
-      // Add paths
-      addPaths(map, mapData.paths);
+      addMarkers(map, locations);
+      addPaths(map, mapData.paths || []);
 
       // Force a resize to ensure map renders correctly
       setTimeout(() => map.invalidateSize(), 100);
     }, 50);
-  }
+  };
 
-// Event handlers
   const openMap = () => {
+    interactive.setAttribute('aria-hidden', 'false');
+
     if (!map) {
       // Initialize map on first open
-      interactive.setAttribute('aria-hidden', 'false');
-
       setupMap();
     } else {
-      interactive.setAttribute('aria-hidden', 'false');
       setTimeout(() => map.invalidateSize(), 100);
     }
+
+    // focus once the overlay is visible, so keyboard users can close it
+    if (closeBtn) setTimeout(() => closeBtn.focus(), 50);
   };
 
   const closeMap = () => {
     interactive.setAttribute('aria-hidden', 'true');
   };
 
-  // Attach event listeners
-  if (openBtn) {
-    openBtn.addEventListener('click', openMap);
+  // Popup mode: the map opens in an overlay
+  if (interactive) {
+    if (openBtn) openBtn.addEventListener('click', openMap);
+    if (closeBtn) closeBtn.addEventListener('click', closeMap);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && interactive.getAttribute('aria-hidden') === 'false') {
+        closeMap();
+      }
+    });
+    return;
   }
 
-  if (closeBtn) {
-    closeBtn.addEventListener('click', closeMap);
+  // Embedded mode, optionally only after the visitor agreed to load the tiles
+  if (loadBtn) {
+    loadBtn.addEventListener('click', () => {
+      loadBtn.closest('.leaflet-map__consent').remove();
+      setupMap();
+    });
+    return;
   }
 
-  // Handle escape key to close map
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && interactive.getAttribute('aria-hidden') === 'false') {
-      closeMap();
-    }
-  });
-
-  if (!interactive) {
-    setupMap();
-  }
+  setupMap();
 };
 
+/**
+ * Build popup and tooltip content with DOM nodes, so titles are never
+ * interpreted as HTML. The description is HTML rendered by Kirby.
+ */
+const popupContent = (title, descriptionHtml) => {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'leaflet-map__popup';
+
+  if (title) {
+    const heading = document.createElement('h4');
+    heading.textContent = title;
+    wrapper.appendChild(heading);
+  }
+
+  if (descriptionHtml) {
+    const text = document.createElement('p');
+    text.innerHTML = descriptionHtml;
+    wrapper.appendChild(text);
+  }
+
+  return wrapper;
+};
+
+const tooltipContent = (title) => {
+  const heading = document.createElement('h5');
+  heading.textContent = title;
+  return heading;
+};
 
 const addMarkers = (map, locations) => {
-  if (!locations || !locations.length) return;
-
   locations.forEach(location => {
-    if (!location.lat || !location.lng || location.hide === 'true') return;
-
-    var marker;
-
-    let markerSizeVal = location.size ? parseInt(location.size) : 1;
-    marker = L.circle([location.lat, location.lng], {
-      className: `leaflet-map__marker`,
+    const marker = L.circle([location.lat, location.lng], {
+      className: 'leaflet-map__marker',
       fillOpacity: 1,
       fillColor: location.color || '#3388ff',
       color: '#ffffff',
       weight: 1,
-      radius: 5 + markerSizeVal * 10
+      radius: 5 + (location.size || 1) * 10
     });
 
     if (location.title || location.description) {
-      const content = `
-        <div class="leaflet-map__popup">
-          ${location.title ? `<h4>${location.title}</h4>` : ''}
-          ${location.description ? `<p>${location.description}</p>` : ''}
-        </div>
-      `;
-      marker.bindPopup(content);
-      if (location.tooltip === 'true') {
-        marker.bindTooltip(`<h5>${location.title}</h5>`, {permanent: true, direction: 'top', offset: [0, -10]});
+      marker.bindPopup(popupContent(location.title, location.description));
+
+      if (location.tooltip && location.title) {
+        marker.bindTooltip(tooltipContent(location.title), {permanent: true, direction: 'top', offset: [0, -10]});
       }
     }
 
@@ -152,35 +149,22 @@ const addMarkers = (map, locations) => {
 };
 
 const addPaths = (map, paths) => {
-  if (!paths || !paths.length) return;
-
   paths.forEach(path => {
-    if (!path.points || !path.points.length) return;
+    const polyline = L.polyline(path.points, {
+      color: path.color || '#3388ff',
+      weight: 2,
+      opacity: 0.7
+    }).addTo(map);
 
-    const points = path.points.map(point => [point.lat, point.lng]);
+    if (path.title) {
+      polyline.bindPopup(popupContent(path.title));
 
-    if (points.length > 1) {
-      const polyline = L.polyline(points, {
-        color: path.color || '#3388ff',
-        weight: 2,
-        opacity: 0.7
-      }).addTo(map);
-
-      if (path.title) {
-
-        const content = `
-        <div class="leaflet-map__popup">
-          ${path.title ? `<h4>${path.title}</h4>` : ''}
-        </div>
-      `;
-        polyline.bindPopup(content);
-        if (path.tooltip === 'true') {
-          polyline.bindTooltip(`<h5>${path.title}</h5>`, {permanent: true, direction: 'top', offset: [0, -10]});
-        }
+      if (path.tooltip) {
+        polyline.bindTooltip(tooltipContent(path.title), {permanent: true, direction: 'top', offset: [0, -10]});
       }
     }
   });
 };
 
 // Initialize maps when DOM is ready
-document.addEventListener('DOMContentLoaded', initArillasMap);
+document.addEventListener('DOMContentLoaded', initLeafletMaps);
