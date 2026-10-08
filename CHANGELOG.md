@@ -1,3 +1,18 @@
+## [1.4.0](https://github.com/tearoom1/kirby-leaflet-map/compare/v1.3.0...v1.4.0) (2026-10-08)
+
+
+### Features
+
+* marker symbols, legend and selectable map styles ([4093126](https://github.com/tearoom1/kirby-leaflet-map/commit/4093126eae93f9e8330c423f5a9d533012fb4a6f))
+
+
+### Bug Fixes
+
+* keep the legend short with general lines for paths and plain markers ([0c30658](https://github.com/tearoom1/kirby-leaflet-map/commit/0c306580f6711227edceb79d252f8f6b80015482))
+* neutral legend symbols unless an own legend entry has one color ([0defd09](https://github.com/tearoom1/kirby-leaflet-map/commit/0defd0995f3ea9d3a9a3ba13ffa8309842ea7288))
+* show the location and path line before their appearance settings ([c486dc7](https://github.com/tearoom1/kirby-leaflet-map/commit/c486dc7757bb4d2838f65ec0353f15edbe402a9e))
+* use leaflet-map as plugin id and install folder ([eeac34e](https://github.com/tearoom1/kirby-leaflet-map/commit/eeac34ef551eb63daecf17f2cdc5f35d625da12a))
+
 ## [1.3.0](https://github.com/tearoom1/kirby-leaflet-map/compare/v1.2.0...v1.3.0) (2026-10-07)
 
 
