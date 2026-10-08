@@ -77,12 +77,29 @@ class IconsTest extends TestCase
 
         // plain markers and paths without an entry share one general line each
         $this->assertSame(['Bus', 'Our shops', 'Location', 'Path', 'Bike route'], array_column($legend, 'label'));
-        // the first location of a group gives the symbol and color
-        $this->assertSame('#ff0000', $legend[0]['color']);
+        // the first location of a group gives the symbol
         $this->assertNotNull($legend[0]['icon']);
         $this->assertNull($legend[1]['icon']);
-        $this->assertSame('#2980b9', $legend[3]['color']);
         $this->assertTrue($legend[3]['path']);
+
+        // colors only for own entries with one color, neutral otherwise
+        $this->assertSame([null, null, null, null, '#3388ff'], array_column($legend, 'color'));
+    }
+
+    public function testLegendShowsTheColorOfOwnEntries(): void
+    {
+        $data = Utils::mapData($this->block([
+            'mapItems' => [
+                ['title' => 'A', 'location' => ['lat' => 1, 'lng' => 1], 'category' => 'Sold out', 'color' => '#c0392b'],
+                ['title' => 'B', 'location' => ['lat' => 2, 'lng' => 2], 'category' => 'Sold out', 'color' => '#c0392b'],
+                ['title' => 'C', 'location' => ['lat' => 3, 'lng' => 3], 'category' => 'Available', 'color' => '#f1c40f'],
+            ],
+        ]));
+
+        $legend = Utils::legend($data);
+
+        $this->assertSame(['#c0392b', '#f1c40f'], array_column($legend, 'color'));
+        $this->assertSame(['#ffffff', '#1d1d1d'], array_column($legend, 'iconColor'));
     }
 
     public function testSnippetRendersTheLegendOnlyIfEnabled(): void

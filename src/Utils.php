@@ -246,11 +246,15 @@ class Utils
      * Without an entry, locations are grouped by symbol, plain markers and
      * paths each share one general line, so the legend stays short.
      *
-     * @return array<int, array{label: string, color: string, icon: ?string, iconColor: string, path: bool}>
+     * Colors may differ within a group, so the legend shows them only for
+     * own legend entries whose locations or paths all share one color.
+     * Otherwise the color is null and the legend shows a neutral symbol.
+     *
+     * @return array<int, array{label: string, color: ?string, icon: ?string, iconColor: string, path: bool}>
      */
     public static function legend(array $mapData): array
     {
-        $entries = [];
+        $groups = [];
         foreach ($mapData['locations'] as $location) {
             $label = match (true) {
                 $location['category'] !== '' => $location['category'],
@@ -258,23 +262,41 @@ class Utils
                 default                      => t('tearoom1.leaflet-map.legend.location', 'Location'),
             };
 
-            $entries[$label] ??= [
-                'label'     => $label,
-                'color'     => $location['color'],
-                'icon'      => $location['icon'] !== null ? $mapData['icons'][$location['icon']] : null,
-                'iconColor' => $location['iconColor'],
-                'path'      => false,
+            $groups[$label] ??= [
+                'label'    => $label,
+                'icon'     => $location['icon'] !== null ? $mapData['icons'][$location['icon']] : null,
+                'path'     => false,
+                'explicit' => $location['category'] !== '',
+                'colors'   => [],
             ];
+            $groups[$label]['colors'][$location['color']] = true;
         }
 
         foreach ($mapData['paths'] as $path) {
             $label = $path['category'] !== '' ? $path['category'] : t('tearoom1.leaflet-map.legend.path', 'Path');
 
             // a separate key, so a path and a location may share a label
-            $entries['path:' . $label] ??= ['label' => $label, 'color' => $path['color'], 'icon' => null, 'iconColor' => '', 'path' => true];
+            $groups['path:' . $label] ??= [
+                'label'    => $label,
+                'icon'     => null,
+                'path'     => true,
+                'explicit' => $path['category'] !== '',
+                'colors'   => [],
+            ];
+            $groups['path:' . $label]['colors'][$path['color']] = true;
         }
 
-        return array_values($entries);
+        return array_values(array_map(function (array $group) {
+            $color = $group['explicit'] && count($group['colors']) === 1 ? array_key_first($group['colors']) : null;
+
+            return [
+                'label'     => $group['label'],
+                'color'     => $color,
+                'icon'      => $group['icon'],
+                'iconColor' => $color !== null ? self::contrast($color) : '#ffffff',
+                'path'      => $group['path'],
+            ];
+        }, $groups));
     }
 
     /**

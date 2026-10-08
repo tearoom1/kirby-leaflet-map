@@ -309,6 +309,9 @@
   }
 
   .leaflet-map__legend-entry {
+    /* neutral symbols where the colors of a group may differ */
+    --marker: #7c858d;
+    --symbol: #ffffff;
     display: flex;
     align-items: center;
     gap: 0.5rem;
