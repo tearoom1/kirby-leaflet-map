@@ -38,7 +38,7 @@ composer require tearoom1/kirby-leaflet-map
 ### Git submodule
 
 ```
-git submodule add https://github.com/tearoom1/leaflet-map.git site/plugins/leaflet-map
+git submodule add https://github.com/tearoom1/kirby-leaflet-map.git site/plugins/leaflet-map
 ```
 
 ### Download
