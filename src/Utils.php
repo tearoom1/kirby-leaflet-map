@@ -188,8 +188,9 @@ class Utils
             }
 
             $paths[] = [
-                'title'   => $path->title()->value() ?? '',
-                'color'   => self::color($path->color()->value(), '#3388ff'),
+                'title'    => $path->title()->value() ?? '',
+                'category' => trim($path->category()->value() ?? ''),
+                'color'    => self::color($path->color()->value(), '#3388ff'),
                 'tooltip' => $path->tooltip()->toBool(),
                 'points'  => $points,
             ];
@@ -241,8 +242,9 @@ class Utils
     }
 
     /**
-     * Legend entries: locations grouped by their legend entry, or by symbol
-     * if they have none, followed by the named paths.
+     * Legend entries: locations and paths grouped by their legend entry.
+     * Without an entry, locations are grouped by symbol, plain markers and
+     * paths each share one general line, so the legend stays short.
      *
      * @return array<int, array{label: string, color: string, icon: ?string, iconColor: string, path: bool}>
      */
@@ -250,15 +252,13 @@ class Utils
     {
         $entries = [];
         foreach ($mapData['locations'] as $location) {
-            $label = $location['category'] !== ''
-                ? $location['category']
-                : ($location['icon'] !== null ? Icons::label($location['icon']) : '');
+            $label = match (true) {
+                $location['category'] !== '' => $location['category'],
+                $location['icon'] !== null   => Icons::label($location['icon']),
+                default                      => t('tearoom1.leaflet-map.legend.location', 'Location'),
+            };
 
-            if ($label === '' || isset($entries[$label])) {
-                continue;
-            }
-
-            $entries[$label] = [
+            $entries[$label] ??= [
                 'label'     => $label,
                 'color'     => $location['color'],
                 'icon'      => $location['icon'] !== null ? $mapData['icons'][$location['icon']] : null,
@@ -268,9 +268,10 @@ class Utils
         }
 
         foreach ($mapData['paths'] as $path) {
-            if ($path['title'] !== '') {
-                $entries[] = ['label' => $path['title'], 'color' => $path['color'], 'icon' => null, 'iconColor' => '', 'path' => true];
-            }
+            $label = $path['category'] !== '' ? $path['category'] : t('tearoom1.leaflet-map.legend.path', 'Path');
+
+            // a separate key, so a path and a location may share a label
+            $entries['path:' . $label] ??= ['label' => $label, 'color' => $path['color'], 'icon' => null, 'iconColor' => '', 'path' => true];
         }
 
         return array_values($entries);

@@ -55,7 +55,7 @@ class IconsTest extends TestCase
         $this->assertSame('#ffffff', $data['locations'][1]['iconColor']);
     }
 
-    public function testLegendGroupsLocationsAndListsPaths(): void
+    public function testLegendGroupsLocationsAndPaths(): void
     {
         $data = Utils::mapData($this->block([
             'mapItems' => [
@@ -64,21 +64,25 @@ class IconsTest extends TestCase
                 ['title' => 'C', 'location' => ['lat' => 3, 'lng' => 3], 'category' => 'Our shops', 'color' => '#0000ff'],
                 ['title' => 'D', 'location' => ['lat' => 4, 'lng' => 4], 'icon' => 'shop', 'category' => 'Our shops'],
                 ['title' => 'E', 'location' => ['lat' => 5, 'lng' => 5]],
+                ['title' => 'F', 'location' => ['lat' => 6, 'lng' => 6]],
             ],
             'paths' => [
-                ['title' => 'Bike tour', 'color' => '#2980b9', 'line' => [['lat' => 1, 'lng' => 1], ['lat' => 2, 'lng' => 2]]],
-                ['title' => '', 'line' => [['lat' => 1, 'lng' => 1], ['lat' => 2, 'lng' => 2]]],
+                ['title' => 'Walk', 'color' => '#2980b9', 'line' => [['lat' => 1, 'lng' => 1], ['lat' => 2, 'lng' => 2]]],
+                ['title' => 'Other walk', 'line' => [['lat' => 1, 'lng' => 1], ['lat' => 2, 'lng' => 2]]],
+                ['title' => 'Tour', 'category' => 'Bike route', 'line' => [['lat' => 1, 'lng' => 1], ['lat' => 2, 'lng' => 2]]],
             ],
         ]));
 
         $legend = Utils::legend($data);
 
-        $this->assertSame(['Bus', 'Our shops', 'Bike tour'], array_column($legend, 'label'));
+        // plain markers and paths without an entry share one general line each
+        $this->assertSame(['Bus', 'Our shops', 'Location', 'Path', 'Bike route'], array_column($legend, 'label'));
         // the first location of a group gives the symbol and color
         $this->assertSame('#ff0000', $legend[0]['color']);
         $this->assertNotNull($legend[0]['icon']);
         $this->assertNull($legend[1]['icon']);
-        $this->assertTrue($legend[2]['path']);
+        $this->assertSame('#2980b9', $legend[3]['color']);
+        $this->assertTrue($legend[3]['path']);
     }
 
     public function testSnippetRendersTheLegendOnlyIfEnabled(): void

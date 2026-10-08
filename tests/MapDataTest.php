@@ -118,10 +118,11 @@ class MapDataTest extends TestCase
         ]));
 
         $this->assertSame([
-            'title'   => 'Walk',
-            'color'   => '#2c3e50',
-            'tooltip' => false,
-            'points'  => [[48.1, 11.5], [48.2, 11.6]],
+            'title'    => 'Walk',
+            'category' => '',
+            'color'    => '#2c3e50',
+            'tooltip'  => false,
+            'points'   => [[48.1, 11.5], [48.2, 11.6]],
         ], $data['paths'][0]);
     }
 

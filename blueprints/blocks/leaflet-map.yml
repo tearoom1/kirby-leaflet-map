@@ -79,7 +79,7 @@ tabs:
         type: toggle
         width: 1/2
         text: Show a legend below the map
-        help: Lists the symbols and paths. Locations are grouped by their legend entry or symbol.
+        help: Lists the symbols, markers and paths, grouped by their legend entry
       mapItems:
         label: Map Locations
         type: structure
@@ -123,7 +123,7 @@ tabs:
           category:
             label: Legend Entry
             type: text
-            help: Locations with the same entry share one line in the legend. Without an entry, the name of the symbol is used.
+            help: Locations with the same entry share one line in the legend. Without an entry, the name of the symbol is used, or "Location" for markers without a symbol.
           location:
             label: Location
             type: leaflet-location
@@ -172,6 +172,10 @@ tabs:
             width: 1/2
             default: true
             help: Only if the map labels are set per location. Otherwise the name appears on hover
+          category:
+            label: Legend Entry
+            type: text
+            help: Paths with the same entry share one line in the legend. Paths without an entry appear together as "Path".
           line:
             label: Path
             type: leaflet-path

@@ -70,7 +70,7 @@ Each map block can be configured in the panel:
 5. Legend: shown below the map
 6. Map style, if the site offers several (see Map styles)
 7. Locations: title, description, size (1–5), color, symbol, legend entry, label, hidden, map center
-8. Paths: name, color, label and the line drawn on the map
+8. Paths: name, color, label, legend entry and the line drawn on the map
 
 Without a location marked as map center, the map shows all locations and paths. It zooms in at most to the default zoom and out below the minimum zoom if needed.
 
@@ -80,7 +80,7 @@ The title of a location appears as a label above the marker and in the popup whe
 
 Each location can show a symbol on its marker: stop (H), bus, train, tram, bicycle, car, parking, charging station, harbour, restaurant, café, bar, accommodation, camping, shop, information, entrance, toilet, accessible, hospital, museum, church, photo spot, park, mountain, swimming, home, highlight, favourite and flag. The symbol is drawn in white, or dark on light marker colors.
 
-The legend lists every symbol and named path of the map. Locations with the same *legend entry* share one line, e.g. "Our shops"; without an entry, the name of the symbol is used. Plain markers appear in the legend only with a legend entry.
+The legend explains the markers and paths of the map. Locations and paths with the same *legend entry* share one line, e.g. "Our shops" or "Bike route". Without an entry, locations are listed by their symbol, while markers without a symbol share one line "Location" and paths one line "Path".
 
 Add your own symbols or remove built-in ones with the `icons` option. Symbols are SVGs with a `0 0 24 24` view box that use `currentColor`:
 

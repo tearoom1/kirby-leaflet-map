@@ -152,6 +152,8 @@ Kirby::plugin('tearoom1/leaflet-map', [
             'tearoom1.leaflet-map.path.remove' => 'Click to remove, drag to move',
             'tearoom1.leaflet-map.icon.none' => 'No symbol',
             'tearoom1.leaflet-map.legend' => 'Legend',
+            'tearoom1.leaflet-map.legend.location' => 'Location',
+            'tearoom1.leaflet-map.legend.path' => 'Path',
         ],
         'de' => [
             'tearoom1.leaflet-map.map' => 'Karte',
@@ -170,6 +172,8 @@ Kirby::plugin('tearoom1/leaflet-map', [
             'tearoom1.leaflet-map.path.remove' => 'Klicken zum Entfernen, ziehen zum Verschieben',
             'tearoom1.leaflet-map.icon.none' => 'Kein Symbol',
             'tearoom1.leaflet-map.legend' => 'Legende',
+            'tearoom1.leaflet-map.legend.location' => 'Ort',
+            'tearoom1.leaflet-map.legend.path' => 'Weg',
         ],
     ],
 ]);
