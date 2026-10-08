@@ -25,6 +25,7 @@ class TileProxyTest extends TestCase
             'east'    => 11.592,
             'minZoom' => 10,
             'maxZoom' => 18,
+            'layer'   => null,
         ], TileProxy::decode($token));
     }
 

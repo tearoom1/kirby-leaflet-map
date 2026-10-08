@@ -4,10 +4,13 @@ load([
     'TearoomOne\\LeafletMap\\Utils' => 'src/Utils.php',
     'TearoomOne\\LeafletMap\\TileProxy' => 'src/TileProxy.php',
     'TearoomOne\\LeafletMap\\Geocoder' => 'src/Geocoder.php',
+    'TearoomOne\\LeafletMap\\Icons' => 'src/Icons.php',
 ], __DIR__);
 
 use Kirby\Data\Data;
+use Kirby\Data\Yaml;
 use TearoomOne\LeafletMap\Geocoder;
+use TearoomOne\LeafletMap\Icons;
 use TearoomOne\LeafletMap\TileProxy;
 use TearoomOne\LeafletMap\Utils;
 
@@ -16,12 +19,43 @@ Kirby::plugin('tearoom1/leaflet-map', [
         'cache.geocode' => true,
     ],
     'blueprints' => [
-        'blocks/leaflet-map' => __DIR__ . '/blueprints/blocks/leaflet-map.yml'
+        'blocks/leaflet-map' => function () {
+            $blueprint = Yaml::read(__DIR__ . '/blueprints/blocks/leaflet-map.yml');
+            $layers = Utils::layers();
+
+            // the choice of map styles only appears if the site offers several
+            if (count($layers) > 1) {
+                $fields = [];
+                foreach ($blueprint['tabs']['content']['fields'] as $name => $field) {
+                    $fields[$name] = $field;
+                    if ($name === 'legend') {
+                        $fields['layer'] = [
+                            'label'    => ['en' => 'Map Style', 'de' => 'Kartenstil'],
+                            'type'        => 'select',
+                            'width'       => '1/2',
+                            // empty: the first style, also for maps created before the option was set
+                            'placeholder' => reset($layers)['label'],
+                            'options'     => array_map(fn ($layer) => $layer['label'], $layers),
+                        ];
+                        $fields['layerSwitch'] = [
+                            'label' => ['en' => 'Switch styles', 'de' => 'Stil wechseln'],
+                            'type'  => 'toggle',
+                            'width' => '1/2',
+                            'text'  => ['en' => 'Visitors can switch the map style', 'de' => 'Besucher können den Kartenstil wechseln'],
+                        ];
+                    }
+                }
+                $blueprint['tabs']['content']['fields'] = $fields;
+            }
+
+            return $blueprint;
+        },
     ],
     'snippets' => [
         'blocks/leaflet-map' => __DIR__ . '/snippets/blocks/leaflet-map.php',
         'leaflet-map/css' => __DIR__ . '/snippets/css.php',
         'leaflet-map/js' => __DIR__ . '/snippets/js.php',
+        'leaflet-map/legend' => __DIR__ . '/snippets/legend.php',
     ],
     'fields' => [
         // Coordinate picker: click on the map or drag the marker
@@ -47,6 +81,15 @@ Kirby::plugin('tearoom1/leaflet-map', [
             'save' => fn ($value) => is_array($value) && isset($value['lat'], $value['lng']) ? $value : null,
         ],
         // Path editor: click on the map to add points, drag or click them to edit
+        // Marker symbol, shown on the color of the location
+        'leaflet-icon' => [
+            'props' => [
+                'value' => fn ($value = null) => Icons::exists($value) ? $value : null,
+            ],
+            'computed' => [
+                'icons' => fn () => Icons::options(),
+            ],
+        ],
         'leaflet-path' => [
             'props' => [
                 'value' => function ($value = null) {
@@ -107,6 +150,8 @@ Kirby::plugin('tearoom1/leaflet-map', [
             'tearoom1.leaflet-map.path.undo' => 'Remove last',
             'tearoom1.leaflet-map.path.clear' => 'Remove all points',
             'tearoom1.leaflet-map.path.remove' => 'Click to remove, drag to move',
+            'tearoom1.leaflet-map.icon.none' => 'No symbol',
+            'tearoom1.leaflet-map.legend' => 'Legend',
         ],
         'de' => [
             'tearoom1.leaflet-map.map' => 'Karte',
@@ -123,6 +168,8 @@ Kirby::plugin('tearoom1/leaflet-map', [
             'tearoom1.leaflet-map.path.undo' => 'Letzten entfernen',
             'tearoom1.leaflet-map.path.clear' => 'Alle Punkte entfernen',
             'tearoom1.leaflet-map.path.remove' => 'Klicken zum Entfernen, ziehen zum Verschieben',
+            'tearoom1.leaflet-map.icon.none' => 'Kein Symbol',
+            'tearoom1.leaflet-map.legend' => 'Legende',
         ],
     ],
 ]);

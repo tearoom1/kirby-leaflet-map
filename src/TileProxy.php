@@ -33,9 +33,9 @@ class TileProxy
      *
      * @param array<int, array{0: float, 1: float}> $points [lat, lng] pairs
      */
-    public static function urlTemplate(array $points, int $minZoom, int $maxZoom): string
+    public static function urlTemplate(array $points, int $minZoom, int $maxZoom, ?string $layer = null): string
     {
-        return self::baseUrl() . '/' . self::token($points, $minZoom, $maxZoom) . '/{z}/{x}/{y}.png';
+        return self::baseUrl() . '/' . self::token($points, $minZoom, $maxZoom, $layer) . '/{z}/{x}/{y}.png';
     }
 
     public static function panelUrlTemplate(): string
@@ -43,7 +43,7 @@ class TileProxy
         return self::baseUrl() . '/' . self::PANEL_TOKEN . '/{z}/{x}/{y}.png';
     }
 
-    public static function token(array $points, int $minZoom, int $maxZoom): string
+    public static function token(array $points, int $minZoom, int $maxZoom, ?string $layer = null): string
     {
         if ($points === []) {
             $points = [[0.0, 0.0]];
@@ -52,7 +52,7 @@ class TileProxy
         $lats = array_column($points, 0);
         $lngs = array_column($points, 1);
 
-        $payload = implode(',', [
+        $values = [
             // the period renews the tile cache every month
             date('Ym'),
             round(min($lats), 5),
@@ -61,7 +61,14 @@ class TileProxy
             round(max($lngs), 5),
             $minZoom,
             $maxZoom,
-        ]);
+        ];
+
+        // the default map style keeps the tokens of earlier versions
+        if ($layer !== null && $layer !== array_key_first(Utils::layers())) {
+            $values[] = $layer;
+        }
+
+        $payload = implode(',', $values);
 
         return rtrim(strtr(base64_encode($payload), '+/', '-_'), '=') . '.' . self::sign($payload);
     }
@@ -69,7 +76,7 @@ class TileProxy
     /**
      * Decode and verify a map token.
      *
-     * @return array{period: string, south: float, west: float, north: float, east: float, minZoom: int, maxZoom: int}|null
+     * @return array{period: string, south: float, west: float, north: float, east: float, minZoom: int, maxZoom: int, layer: ?string}|null
      */
     public static function decode(string $token): ?array
     {
@@ -84,7 +91,7 @@ class TileProxy
         }
 
         $values = explode(',', $payload);
-        if (count($values) !== 7) {
+        if (count($values) !== 7 && count($values) !== 8) {
             return null;
         }
 
@@ -98,6 +105,7 @@ class TileProxy
             'east'    => (float)$east,
             'minZoom' => (int)$minZoom,
             'maxZoom' => (int)$maxZoom,
+            'layer'   => $values[7] ?? null,
         ];
     }
 
@@ -106,10 +114,11 @@ class TileProxy
      */
     public static function allows(string $token, int $z, int $x, int $y): bool
     {
-        $maxZoom = (int)option('tearoom1.leaflet-map.tiles.maxZoom', 19);
+        $area  = $token === self::PANEL_TOKEN ? null : self::decode($token);
+        $layer = self::layer($area);
         $count = 2 ** $z;
 
-        if ($z < 0 || $z > $maxZoom || $x < 0 || $y < 0 || $x >= $count || $y >= $count) {
+        if ($layer === null || $z < 0 || $z > $layer['maxZoom'] || $x < 0 || $y < 0 || $x >= $count || $y >= $count) {
             return false;
         }
 
@@ -117,7 +126,6 @@ class TileProxy
             return kirby()->user() !== null;
         }
 
-        $area = self::decode($token);
         if ($area === null || $z < $area['minZoom'] || $z > $area['maxZoom']) {
             return false;
         }
@@ -142,7 +150,8 @@ class TileProxy
         $file = self::file($token, $z, $x, $y);
 
         if (F::exists($file) === false) {
-            $image = self::fetch($z, $x, $y);
+            $layer = self::layer($token === self::PANEL_TOKEN ? null : self::decode($token));
+            $image = self::fetch($layer['url'], $z, $x, $y);
             if ($image === null) {
                 return new Response('', 'text/plain', 502);
             }
@@ -156,12 +165,23 @@ class TileProxy
         ]);
     }
 
-    protected static function fetch(int $z, int $x, int $y): ?string
+    /**
+     * Map style of a token, the default one for the panel and older tokens.
+     * Null for styles that are no longer configured.
+     */
+    protected static function layer(?array $area): ?array
+    {
+        $key = $area['layer'] ?? null;
+
+        return $key === null ? Utils::layer(null) : (Utils::layers()[$key] ?? null);
+    }
+
+    protected static function fetch(string $template, int $z, int $x, int $y): ?string
     {
         $url = str_replace(
             ['{s}', '{z}', '{x}', '{y}', '{r}'],
             ['a', $z, $x, $y, ''],
-            Utils::tiles()['url']
+            $template
         );
 
         try {

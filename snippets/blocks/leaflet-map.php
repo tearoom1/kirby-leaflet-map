@@ -10,6 +10,8 @@ $isPopup = $block->displayMode()->value() === 'popup';
 $loadOnClick = !$isPopup && option('tearoom1.leaflet-map.loadOnClick', false);
 $title = $block->mapTitle()->value() ?? '';
 $mapLabel = $title !== '' ? $title : t('tearoom1.leaflet-map.map');
+$mapData = Utils::mapData($block);
+$legend = $block->legend()->toBool() ? Utils::legend($mapData) : [];
 ?>
 <div class="leaflet-map" id="leaflet-map-<?= $block->id() ?>">
     <?php if ($title !== ''): ?>
@@ -41,6 +43,7 @@ $mapLabel = $title !== '' ? $title : t('tearoom1.leaflet-map.map');
                         <button type="button" class="leaflet-map__close-btn" aria-label="<?= esc(t('tearoom1.leaflet-map.close')) ?>">×</button>
                     </div>
                     <div class="leaflet-map__map" data-block-id="<?= $block->id() ?>"></div>
+                    <?php snippet('leaflet-map/legend', ['entries' => $legend]) ?>
                 </div>
             </div>
         <?php else: ?>
@@ -52,8 +55,9 @@ $mapLabel = $title !== '' ? $title : t('tearoom1.leaflet-map.map');
                     </div>
                 <?php endif ?>
             </div>
+            <?php snippet('leaflet-map/legend', ['entries' => $legend]) ?>
         <?php endif ?>
     </div>
 
-    <script type="application/json" class="leaflet-map__data"><?= Utils::json(Utils::mapData($block)) ?></script>
+    <script type="application/json" class="leaflet-map__data"><?= Utils::json($mapData) ?></script>
 </div>

@@ -58,15 +58,27 @@ const initSingleMap = (container) => {
         map.fitBounds(points, { ...padding, maxZoom: zoom.default || 15 });
       }
 
-      L.tileLayer(tiles.url || 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: tiles.attribution || '',
-        maxZoom: tiles.maxZoom || 19,
-        // tile servers like OSM require a referrer, even if the site restricts it
-        referrerPolicy: 'strict-origin-when-cross-origin'
-      }).addTo(map);
+      // the selected map style, the others only if visitors may switch
+      const tileLayers = (mapData.layers && mapData.layers.length ? mapData.layers : [tiles]).map(layer =>
+        L.tileLayer(layer.url || 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: layer.attribution || '',
+          // zoom in further than the style offers by scaling its tiles
+          maxNativeZoom: layer.maxZoom || 19,
+          maxZoom: zoom.max || 19,
+          // tile servers like OSM require a referrer, even if the site restricts it
+          referrerPolicy: 'strict-origin-when-cross-origin'
+        })
+      );
+      tileLayers[0].addTo(map);
+
+      if (tileLayers.length > 1) {
+        const choices = {};
+        mapData.layers.forEach((layer, index) => { choices[layer.label] = tileLayers[index]; });
+        L.control.layers(choices, null, { position: 'topright' }).addTo(map);
+      }
 
       const labels = mapData.labels || 'individual';
-      addMarkers(map, locations, labels);
+      addMarkers(map, locations, labels, mapData.icons || {});
       addPaths(map, paths, labels);
 
       // permanent tooltips overlap when zoomed out far, hide them there
@@ -170,17 +182,47 @@ const bindLabel = (layer, title, individual, mode) => {
   });
 };
 
-const addMarkers = (map, locations, labels) => {
+/**
+ * Round marker with the symbol, sized like the plain markers would be.
+ * The symbol markup comes from the plugin or the site configuration.
+ */
+const iconMarker = (location, svg) => {
+  const diameter = 22 + (location.size || 1) * 4;
+  const element = document.createElement('span');
+  element.className = 'leaflet-map__symbol';
+  element.style.setProperty('--marker', location.color || '#3388ff');
+  element.style.setProperty('--symbol', location.iconColor || '#ffffff');
+  element.innerHTML = svg;
+
+  const marker = L.marker([location.lat, location.lng], {
+    icon: L.divIcon({
+      className: 'leaflet-map__symbol-marker',
+      html: element,
+      iconSize: [diameter, diameter],
+      iconAnchor: [diameter / 2, diameter / 2],
+      popupAnchor: [0, -diameter / 2],
+      tooltipAnchor: [0, -diameter / 2 + 6]
+    }),
+    title: location.title || '',
+    keyboard: true
+  });
+
+  return marker;
+};
+
+const addMarkers = (map, locations, labels, icons) => {
   locations.forEach(location => {
-    // radius in pixels, so markers keep their size at every zoom level
-    const marker = L.circleMarker([location.lat, location.lng], {
-      className: 'leaflet-map__marker',
-      fillOpacity: 1,
-      fillColor: location.color || '#3388ff',
-      color: '#ffffff',
-      weight: 2,
-      radius: 5 + (location.size || 1) * 2
-    });
+    const marker = location.icon && icons[location.icon]
+      ? iconMarker(location, icons[location.icon])
+      // radius in pixels, so markers keep their size at every zoom level
+      : L.circleMarker([location.lat, location.lng], {
+        className: 'leaflet-map__marker',
+        fillOpacity: 1,
+        fillColor: location.color || '#3388ff',
+        color: '#ffffff',
+        weight: 2,
+        radius: 5 + (location.size || 1) * 2
+      });
 
     if (location.title || location.description) {
       marker.bindPopup(popupContent(location.title, location.description));

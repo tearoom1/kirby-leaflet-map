@@ -8,6 +8,9 @@ A map block for Kirby with markers and paths, based on [Leaflet](https://leaflet
 
 - Map block for Kirby's block and layout editor
 - Markers with title, description, size and color
+- 30 marker symbols like stops, parking, cafés or museums, plus your own SVGs
+- Optional legend below the map
+- Links in descriptions for further information
 - Paths with their own color, drawn directly on the map in the panel
 - Location picker in the panel: search an address, click on the map or drag the marker
 - The map automatically shows all locations and paths, or centers on a chosen location
@@ -15,6 +18,7 @@ A map block for Kirby with markers and paths, based on [Leaflet](https://leaflet
 - Embedded map or a thumbnail that opens the map in an overlay
 - Default, minimum and maximum zoom per map
 - Privacy friendly: tile proxy on your own server or a "load map" button before anything is loaded
+- Several map styles (OpenStreetMap, OpenTopoMap, CyclOSM, …) to choose per map, optionally switchable by visitors
 - Works with any Leaflet tile provider
 - English and German translations, works on single- and multi-language sites
 
@@ -34,7 +38,7 @@ composer require tearoom1/kirby-leaflet-map
 ### Git submodule
 
 ```
-git submodule add https://github.com/tearoom1/kirby-leaflet-map.git site/plugins/leaflet-map
+git submodule add https://github.com/tearoom1/leaflet-map.git site/plugins/leaflet-map
 ```
 
 ### Download
@@ -63,12 +67,55 @@ Each map block can be configured in the panel:
 2. Display mode: embedded or a thumbnail that opens the map in an overlay
 3. Zoom levels: default, minimum and maximum
 4. Labels: set per location, always visible, on hover or only in the popup
-5. Locations: title, description, size (1–5), color, label, hidden, map center
-6. Paths: name, color, label and the line drawn on the map
+5. Legend: shown below the map
+6. Map style, if the site offers several (see Map styles)
+7. Locations: title, description, size (1–5), color, symbol, legend entry, label, hidden, map center
+8. Paths: name, color, label and the line drawn on the map
 
 Without a location marked as map center, the map shows all locations and paths. It zooms in at most to the default zoom and out below the minimum zoom if needed.
 
-The title of a location appears as a label above the marker and in the popup when the marker is clicked, the description only in the popup.
+The title of a location appears as a label above the marker and in the popup when the marker is clicked, the description only in the popup. Descriptions support Kirbytext, so they can link to further information: `[Opening hours](https://example.com)` or `(link: https://example.com text: Opening hours)`.
+
+### Symbols and legend
+
+Each location can show a symbol on its marker: stop (H), bus, train, tram, bicycle, car, parking, charging station, harbour, restaurant, café, bar, accommodation, camping, shop, information, entrance, toilet, accessible, hospital, museum, church, photo spot, park, mountain, swimming, home, highlight, favourite and flag. The symbol is drawn in white, or dark on light marker colors.
+
+The legend lists every symbol and named path of the map. Locations with the same *legend entry* share one line, e.g. "Our shops"; without an entry, the name of the symbol is used. Plain markers appear in the legend only with a legend entry.
+
+Add your own symbols or remove built-in ones with the `icons` option. Symbols are SVGs with a `0 0 24 24` view box that use `currentColor`:
+
+```php
+'tearoom1.leaflet-map.icons' => [
+    'ferry' => [
+        'label' => ['en' => 'Ferry', 'de' => 'Fähre'],
+        'svg'   => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">…</svg>',
+    ],
+    'car' => false,
+],
+```
+
+### Map styles
+
+By default all maps use the tile layer of the `tiles` options. With the `layers` option, editors can choose a style per map and allow visitors to switch between them:
+
+```php
+'tearoom1.leaflet-map.layers' => [
+    'osm',      // OpenStreetMap
+    'osm-de',   // OpenStreetMap Deutschland
+    'topo',     // OpenTopoMap
+    'cyclosm',  // CyclOSM
+    'humanitarian',
+    'default',  // the tiles.* options
+    'satellite' => [
+        'label'       => 'Satellite',
+        'url'         => 'https://tiles.example.com/{z}/{x}/{y}.jpg',
+        'attribution' => '…',
+        'maxZoom'     => 18,
+    ],
+],
+```
+
+The first style is the default. All presets are free OpenStreetMap based services; please respect their usage policies, or use the tile proxy, which works for all styles.
 
 ### Path editor
 
@@ -142,6 +189,8 @@ return [
         'geocoder.url'       => 'https://nominatim.openstreetmap.org/search',
         'panel.center'       => [20, 0],
         'panel.zoom'         => 2,
+        'layers'             => ['default'],
+        'icons'              => [],
         'alwaysIncludeAssets' => true,
         'enabled'            => true,
     ],
@@ -158,6 +207,8 @@ return [
 | `loadOnClick` | `false` | Embedded maps only load after a click (see Privacy) |
 | `geocoder` | `true` | Address search in the location picker |
 | `geocoder.url` | Nominatim | Nominatim compatible search endpoint |
+| `layers` | `['default']` | Map styles editors can choose from (see Map styles) |
+| `icons` | `[]` | Own marker symbols, `false` removes a built-in one (see Symbols and legend) |
 | `panel.center` | `[20, 0]` | Center of the picker map while no location is set |
 | `panel.zoom` | `2` | Zoom of the picker map while no location is set |
 | `alwaysIncludeAssets` | `true` | Include CSS and JS on every page, otherwise only on pages with a map block |
@@ -173,6 +224,7 @@ This plugin is licensed under the [MIT License](LICENSE)
 
 - [Mathis Koblin](https://www.tearoom.one)
 - Built with [Leaflet](https://leafletjs.com/)
+- Marker symbols from [Lucide](https://lucide.dev/) ([ISC License](LICENSE-lucide))
 - Map data © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors, address search by [Nominatim](https://nominatim.org/)
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://coff.ee/tearoom1)

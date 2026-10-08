@@ -21,6 +21,9 @@ class MapDataTest extends TestCase
             'description' => '',
             'size'        => 3,
             'color'       => '#e74c3c',
+            'icon'        => null,
+            'iconColor'   => '#ffffff',
+            'category'    => '',
             'tooltip'     => true,
             'center'      => false,
         ], $data['locations'][0]);
@@ -87,6 +90,20 @@ class MapDataTest extends TestCase
         ]));
 
         $this->assertSame('With <strong>bold</strong> text', $data['locations'][0]['description']);
+    }
+
+    public function testDescriptionsCanLinkToFurtherInformation(): void
+    {
+        $data = Utils::mapData($this->block([
+            'mapItems' => [
+                ['title' => 'A', 'location' => ['lat' => 1, 'lng' => 1], 'description' => '[Opening hours](https://example.com/hours) and (link: https://example.com/menu text: menu)'],
+            ],
+        ]));
+
+        $this->assertSame(
+            '<a href="https://example.com/hours">Opening hours</a> and <a href="https://example.com/menu">menu</a>',
+            $data['locations'][0]['description']
+        );
     }
 
     public function testReadsPathsOfThePathEditor(): void

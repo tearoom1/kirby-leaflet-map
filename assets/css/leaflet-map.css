@@ -152,6 +152,30 @@
     h3 {
       margin: 0;
       font-size: 1.2rem;
+      /* the heading styles of the website may not fit the colored bar */
+      color: inherit;
+      opacity: 1;
+    }
+  }
+
+  /* map style switch: website styles for labels would break its layout */
+  .leaflet-control-layers label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0.15rem 0;
+    text-align: left;
+    white-space: nowrap;
+    font-size: var(--map-font-size-small);
+
+    span {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    input {
+      margin: 0;
     }
   }
 
@@ -238,5 +262,78 @@
     p {
       margin: 0;
     }
+  }
+
+  .leaflet-map__popup-text a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /* marker with a symbol, also used in the legend */
+  .leaflet-map__symbol-marker {
+    background: none;
+    border: none;
+  }
+
+  .leaflet-map__symbol {
+    display: grid;
+    place-items: center;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    background: var(--marker);
+    color: var(--symbol);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+
+    svg {
+      width: 58%;
+      height: 58%;
+    }
+  }
+
+  .leaflet-map__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    margin: 0;
+    padding: 0.75rem 0 0;
+    list-style: none;
+    font-size: var(--map-font-size-small);
+  }
+
+  .leaflet-map__fullscreen .leaflet-map__legend {
+    padding: 0.75rem 1rem;
+  }
+
+  .leaflet-map__legend-entry {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .leaflet-map__symbol {
+      width: 1.6rem;
+      height: 1.6rem;
+      box-shadow: none;
+    }
+  }
+
+  .leaflet-map__legend-dot {
+    width: 0.9rem;
+    height: 0.9rem;
+    margin-inline: 0.35rem;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    background: var(--marker);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
+  }
+
+  .leaflet-map__legend-line {
+    width: 1.6rem;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--marker);
   }
 }

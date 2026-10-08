@@ -31,7 +31,45 @@ class Utils
     }
 
     /**
-     * Tile layer settings shared by the website and the panel picker.
+     * Map styles that can be enabled with the `layers` option. All of them are
+     * free OpenStreetMap based tile services; check their usage policies
+     * before using them on a busy site, or use the tile proxy.
+     */
+    public const LAYER_PRESETS = [
+        'osm' => [
+            'label'       => 'OpenStreetMap',
+            'url'         => self::DEFAULT_TILES_URL,
+            'attribution' => self::DEFAULT_TILES_ATTRIBUTION,
+            'maxZoom'     => 19,
+        ],
+        'osm-de' => [
+            'label'       => 'OpenStreetMap Deutschland',
+            'url'         => 'https://tile.openstreetmap.de/{z}/{x}/{y}.png',
+            'attribution' => self::DEFAULT_TILES_ATTRIBUTION,
+            'maxZoom'     => 18,
+        ],
+        'humanitarian' => [
+            'label'       => 'Humanitarian',
+            'url'         => 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
+            'attribution' => self::DEFAULT_TILES_ATTRIBUTION . ', Tiles style by <a href="https://www.hotosm.org/">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/">OpenStreetMap France</a>',
+            'maxZoom'     => 19,
+        ],
+        'topo' => [
+            'label'       => 'OpenTopoMap',
+            'url'         => 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+            'attribution' => 'Map data: ' . self::DEFAULT_TILES_ATTRIBUTION . ', SRTM | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
+            'maxZoom'     => 17,
+        ],
+        'cyclosm' => [
+            'label'       => 'CyclOSM',
+            'url'         => 'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
+            'attribution' => '<a href="https://www.cyclosm.org">CyclOSM</a> hosted by <a href="https://openstreetmap.fr/">OpenStreetMap France</a> | Map data: ' . self::DEFAULT_TILES_ATTRIBUTION,
+            'maxZoom'     => 20,
+        ],
+    ];
+
+    /**
+     * Tile layer settings of the `tiles` option, the default map style.
      */
     public static function tiles(): array
     {
@@ -40,6 +78,54 @@ class Utils
             'attribution' => option('tearoom1.leaflet-map.tiles.attribution', self::DEFAULT_TILES_ATTRIBUTION),
             'maxZoom'     => (int)option('tearoom1.leaflet-map.tiles.maxZoom', 19),
         ];
+    }
+
+    /**
+     * The map styles editors can choose from, the first one is the default.
+     * The `layers` option lists preset names, 'default' for the `tiles`
+     * option, or own definitions: 'name' => ['label', 'url', 'attribution', 'maxZoom'].
+     *
+     * @return array<string, array{label: string, url: string, attribution: string, maxZoom: int}>
+     */
+    public static function layers(): array
+    {
+        $layers = [];
+        foreach ((array)option('tearoom1.leaflet-map.layers', ['default']) as $key => $layer) {
+            if (is_string($layer)) {
+                [$key, $layer] = [$layer, $layer === 'default'
+                    ? ['label' => 'Standard'] + self::tiles()
+                    : self::LAYER_PRESETS[$layer] ?? null];
+            }
+
+            if (is_array($layer) && is_string($layer['url'] ?? null)) {
+                $layers[(string)$key] = [
+                    'label'       => (string)($layer['label'] ?? $key),
+                    'url'         => $layer['url'],
+                    'attribution' => (string)($layer['attribution'] ?? ''),
+                    'maxZoom'     => (int)($layer['maxZoom'] ?? 19),
+                ];
+            }
+        }
+
+        return $layers !== [] ? $layers : ['default' => ['label' => 'Standard'] + self::tiles()];
+    }
+
+    /**
+     * Settings of a map style, the default one for unknown names.
+     */
+    public static function layer(?string $key): array
+    {
+        $layers = self::layers();
+
+        return $layers[$key ?? ''] ?? reset($layers);
+    }
+
+    /**
+     * Key of the map style, null for unknown names.
+     */
+    public static function layerKey(?string $key): ?string
+    {
+        return $key !== null && isset(self::layers()[$key]) ? $key : null;
     }
 
     /**
@@ -54,16 +140,28 @@ class Utils
                 continue;
             }
 
+            $color = self::color($item->color()->value(), '#3388ff');
+            $icon  = $item->icon()->value();
+
             $locations[] = [
                 'lat'         => $coordinates['lat'],
                 'lng'         => $coordinates['lng'],
                 'title'       => $item->title()->value() ?? '',
                 'description' => $item->description()->isNotEmpty() ? $item->description()->kti()->value() : '',
                 'size'        => max(1, min(5, $item->size()->toInt() ?: 1)),
-                'color'       => self::color($item->color()->value(), '#3388ff'),
+                'color'       => $color,
+                'icon'        => Icons::exists($icon) ? $icon : null,
+                'iconColor'   => self::contrast($color),
+                'category'    => trim($item->category()->value() ?? ''),
                 'tooltip'     => $item->tooltip()->toBool(),
                 'center'      => $item->center()->toBool(),
             ];
+        }
+
+        // each symbol once, the markers refer to it by name
+        $icons = [];
+        foreach (array_filter(array_column($locations, 'icon')) as $icon) {
+            $icons[$icon] ??= Icons::svg($icon);
         }
 
         $paths = [];
@@ -101,15 +199,27 @@ class Utils
         $maxZoom = $block->maxZoom()->toInt() ?: 19;
         [$minZoom, $maxZoom] = [min($minZoom, $maxZoom), max($minZoom, $maxZoom)];
 
-        $tiles = self::tiles();
-        if (TileProxy::enabled()) {
-            // the token limits the proxy to the area of this map
-            $points = array_map(fn ($location) => [$location['lat'], $location['lng']], $locations);
-            foreach ($paths as $path) {
-                $points = array_merge($points, $path['points']);
+        // the selected map style first, the others only if visitors may switch
+        $selected = self::layerKey($block->layer()->value()) ?? array_key_first(self::layers());
+        $keys = [$selected];
+        if ($block->layerSwitch()->toBool()) {
+            $keys = array_unique([$selected, ...array_keys(self::layers())]);
+        }
+
+        $points = array_map(fn ($location) => [$location['lat'], $location['lng']], $locations);
+        foreach ($paths as $path) {
+            $points = array_merge($points, $path['points']);
+        }
+
+        $layers = [];
+        foreach ($keys as $key) {
+            $layer = self::layer($key);
+            if (TileProxy::enabled()) {
+                // the token limits the proxy to the area of this map
+                // zoom 0 upwards: the map may zoom out further to show all locations
+                $layer['url'] = TileProxy::urlTemplate($points, 0, min($maxZoom, $layer['maxZoom']), $key);
             }
-            // zoom 0 upwards: the map may zoom out further to show all locations
-            $tiles['url'] = TileProxy::urlTemplate($points, 0, $maxZoom);
+            $layers[] = $layer;
         }
 
         $labels = $block->labels()->value();
@@ -119,13 +229,67 @@ class Utils
             'labels'    => in_array($labels, ['always', 'hover', 'none'], true) ? $labels : 'individual',
             'locations' => $locations,
             'paths'     => $paths,
+            'icons'     => $icons,
             'zoom'      => [
                 'default' => $block->defaultZoom()->toInt() ?: 15,
                 'min'     => $minZoom,
                 'max'     => $maxZoom,
             ],
-            'tiles'     => $tiles,
+            'tiles'     => $layers[0],
+            'layers'    => count($layers) > 1 ? $layers : [],
         ];
+    }
+
+    /**
+     * Legend entries: locations grouped by their legend entry, or by symbol
+     * if they have none, followed by the named paths.
+     *
+     * @return array<int, array{label: string, color: string, icon: ?string, iconColor: string, path: bool}>
+     */
+    public static function legend(array $mapData): array
+    {
+        $entries = [];
+        foreach ($mapData['locations'] as $location) {
+            $label = $location['category'] !== ''
+                ? $location['category']
+                : ($location['icon'] !== null ? Icons::label($location['icon']) : '');
+
+            if ($label === '' || isset($entries[$label])) {
+                continue;
+            }
+
+            $entries[$label] = [
+                'label'     => $label,
+                'color'     => $location['color'],
+                'icon'      => $location['icon'] !== null ? $mapData['icons'][$location['icon']] : null,
+                'iconColor' => $location['iconColor'],
+                'path'      => false,
+            ];
+        }
+
+        foreach ($mapData['paths'] as $path) {
+            if ($path['title'] !== '') {
+                $entries[] = ['label' => $path['title'], 'color' => $path['color'], 'icon' => null, 'iconColor' => '', 'path' => true];
+            }
+        }
+
+        return array_values($entries);
+    }
+
+    /**
+     * Dark symbols on light marker colors, white ones otherwise.
+     */
+    public static function contrast(string $color): string
+    {
+        $hex = ltrim($color, '#');
+        if (strlen($hex) < 6) {
+            $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+        }
+
+        [$r, $g, $b] = array_map(fn ($part) => hexdec($part) / 255, str_split(substr($hex, 0, 6), 2));
+        $luminance = 0.2126 * $r + 0.7152 * $g + 0.0722 * $b;
+
+        return $luminance > 0.6 ? '#1d1d1d' : '#ffffff';
     }
 
     /**
