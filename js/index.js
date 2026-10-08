@@ -5,7 +5,7 @@ import LocationField from './components/LocationField.vue'
 import LocationFieldPreview from './components/LocationFieldPreview.vue'
 import PathField from './components/PathField.vue'
 
-panel.plugin('tearoom1/kirby-leaflet-map', {
+panel.plugin('tearoom1/leaflet-map', {
   fields: {
     'leaflet-location': LocationField,
     'leaflet-path': PathField

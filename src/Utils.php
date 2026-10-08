@@ -176,10 +176,10 @@ class Utils
     private static function printAssetString($assetType): void
     {
         if ($assetType === 'css') {
-            echo css(['media/plugins/tearoom1/kirby-leaflet-map/css/leaflet-map.css']);
+            echo css(['media/plugins/tearoom1/leaflet-map/css/leaflet-map.css']);
         } elseif ($assetType === 'js') {
-            echo js(['media/plugins/tearoom1/kirby-leaflet-map/js/leaflet.js']);
-            echo js(['media/plugins/tearoom1/kirby-leaflet-map/js/leaflet-map.js']);
+            echo js(['media/plugins/tearoom1/leaflet-map/js/leaflet.js']);
+            echo js(['media/plugins/tearoom1/leaflet-map/js/leaflet-map.js']);
         }
     }
 }

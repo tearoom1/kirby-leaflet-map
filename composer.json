@@ -57,5 +57,8 @@
   },
   "scripts": {
     "test": "phpunit"
+  },
+  "extra": {
+    "installer-name": "leaflet-map"
   }
 }

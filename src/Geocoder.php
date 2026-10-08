@@ -30,7 +30,7 @@ class Geocoder
             return [];
         }
 
-        $cache = kirby()->cache('tearoom1.kirby-leaflet-map.geocode');
+        $cache = kirby()->cache('tearoom1.leaflet-map.geocode');
         $key = md5($query . '|' . $language);
 
         if (($cached = $cache->get($key)) !== null) {

@@ -11,7 +11,7 @@ use TearoomOne\LeafletMap\Geocoder;
 use TearoomOne\LeafletMap\TileProxy;
 use TearoomOne\LeafletMap\Utils;
 
-Kirby::plugin('tearoom1/kirby-leaflet-map', [
+Kirby::plugin('tearoom1/leaflet-map', [
     'options' => [
         'cache.geocode' => true,
     ],
