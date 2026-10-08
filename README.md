@@ -117,6 +117,30 @@ By default all maps use the tile layer of the `tiles` options. With the `layers`
 
 The first style is the default. All presets are free OpenStreetMap based services; please respect their usage policies, or use the tile proxy, which works for all styles.
 
+The presets cover the whole world. Official maps of a single country are often calmer and free as well, but stay empty outside of it, so they are not included as presets. Add them as own styles if your maps stay within that country, e.g. [basemap.de](https://basemap.de) for Germany or [The National Map](https://www.usgs.gov/programs/national-geospatial-program/national-map) of the USGS for the United States. Note the `{y}/{x}` order in their URLs:
+
+```php
+'tearoom1.leaflet-map.layers' => [
+    'osm',
+    // Germany only
+    'basemap-de' => [
+        'label'       => 'basemap.de',
+        'url'         => 'https://sgx.geodatenzentrum.de/wmts_basemapde/tile/1.0.0/de_basemapde_web_raster_farbe/default/GLOBAL_WEBMERCATOR/{z}/{y}/{x}.png',
+        'attribution' => '&copy; <a href="https://basemap.de">basemap.de</a> / BKG | Datenquellen: &copy; GeoBasis-DE',
+        'maxZoom'     => 19,
+    ],
+    // United States only
+    'usgs-topo' => [
+        'label'       => 'USGS Topo',
+        'url'         => 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}',
+        'attribution' => 'Tiles courtesy of the <a href="https://www.usgs.gov/">U.S. Geological Survey</a>',
+        'maxZoom'     => 16,
+    ],
+],
+```
+
+For basemap.de, `de_basemapde_web_raster_grau` gives a gray version, for the USGS, `USGSImageryOnly` instead of `USGSTopo` gives aerial images. Providers that need an API key, like Stadia Maps, Thunderforest or MapTiler, work the same way with the key in the URL; check their terms for your site.
+
 ### Path editor
 
 Paths are drawn with the `leaflet-path` field: click on the map to add a point, drag a point to move it and click it to remove it. It stores a list of points:
