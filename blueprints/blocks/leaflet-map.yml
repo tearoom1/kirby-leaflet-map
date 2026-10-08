@@ -112,6 +112,9 @@ tabs:
             type: hidden
           lng:
             type: hidden
+          icon:
+            label: Symbol
+            type: leaflet-icon
           size:
             label: Size
             type: range
@@ -126,9 +129,6 @@ tabs:
             default: "#3388ff"
             width: 1/2
             help: Custom color for this location marker
-          icon:
-            label: Symbol
-            type: leaflet-icon
           category:
             label: Legend Entry
             type: text
