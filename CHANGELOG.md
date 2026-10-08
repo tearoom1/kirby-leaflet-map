@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/tearoom1/kirby-leaflet-map/compare/v1.4.0...v1.4.1) (2026-10-08)
+
+
+### Bug Fixes
+
+* show the symbol right after the location ([57e9203](https://github.com/tearoom1/kirby-leaflet-map/commit/57e92032ed717bdeab093acfdf13c7ca23cd7945))
+
 ## [1.4.0](https://github.com/tearoom1/kirby-leaflet-map/compare/v1.3.0...v1.4.0) (2026-10-08)
 
 
