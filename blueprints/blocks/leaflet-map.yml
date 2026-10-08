@@ -103,6 +103,15 @@ tabs:
             label: Description
             type: textarea
             size: small
+          location:
+            label: Location
+            type: leaflet-location
+            translate: false
+          # Former coordinate fields, still read for existing content
+          lat:
+            type: hidden
+          lng:
+            type: hidden
           size:
             label: Size
             type: range
@@ -124,15 +133,6 @@ tabs:
             label: Legend Entry
             type: text
             help: Locations with the same entry share one line in the legend. Without an entry, the name of the symbol is used, or "Location" for markers without a symbol.
-          location:
-            label: Location
-            type: leaflet-location
-            translate: false
-          # Former coordinate fields, still read for existing content
-          lat:
-            type: hidden
-          lng:
-            type: hidden
           tooltip:
             label: Always show label
             type: toggle
@@ -161,6 +161,13 @@ tabs:
           title:
             label: Path Name
             type: text
+          line:
+            label: Path
+            type: leaflet-path
+            translate: false
+          # Former points structure, still read for existing content
+          points:
+            type: hidden
           color:
             label: Path Color
             type: color
@@ -176,10 +183,3 @@ tabs:
             label: Legend Entry
             type: text
             help: Paths with the same entry share one line in the legend. Paths without an entry appear together as "Path".
-          line:
-            label: Path
-            type: leaflet-path
-            translate: false
-          # Former points structure, still read for existing content
-          points:
-            type: hidden
