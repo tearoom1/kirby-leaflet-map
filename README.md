@@ -252,3 +252,9 @@ This plugin is licensed under the [MIT License](LICENSE)
 - Map data © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors, address search by [Nominatim](https://nominatim.org/)
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://coff.ee/tearoom1)
+
+## Screenshots
+
+[Light preview](screenshot.jpg) · [Dark preview](screenshot-dark.jpg)
+
+Both previews use the same Munich map at 1408 × 902 pixels. The dark preview uses site CSS to theme the OpenStreetMap tiles, labels and map controls.
