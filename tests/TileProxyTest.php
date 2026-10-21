@@ -152,4 +152,71 @@ class TileProxyTest extends TestCase
             'tearoom1.leaflet-map.tiles.url'   => self::$mockUrl . '/tiles/{z}/{x}/{y}.png',
         ], $options);
     }
+
+    public function testCleanupRemovesTilesOfOldPeriods(): void
+    {
+        $this->app();
+        $root = $this->root . '/media/leaflet-map/tiles';
+        $current = TileProxy::token([self::POINT], 10, 18);
+        $previous = $this->tokenForPeriod(date('Ym', strtotime('first day of last month')));
+        $old = $this->tokenForPeriod('202001');
+        foreach ([$current, $previous, $old, 'not-a-token', TileProxy::PANEL_TOKEN] as $token) {
+            $this->tile($root . '/' . $token);
+        }
+
+        $this->cleanup();
+
+        $this->assertDirectoryExists($root . '/' . $current);
+        $this->assertDirectoryExists($root . '/' . $previous);
+        $this->assertDirectoryExists($root . '/' . TileProxy::PANEL_TOKEN);
+        $this->assertDirectoryDoesNotExist($root . '/' . $old);
+        $this->assertDirectoryDoesNotExist($root . '/not-a-token');
+    }
+
+    public function testCleanupRenewsThePanelCacheAfterTwoMonths(): void
+    {
+        $this->app();
+        $panel = $this->root . '/media/leaflet-map/tiles/' . TileProxy::PANEL_TOKEN;
+        $this->tile($panel);
+        touch($panel, strtotime('-3 months'));
+
+        $this->cleanup();
+
+        $this->assertDirectoryDoesNotExist($panel);
+    }
+
+    public function testCleanupRunsAtMostOncePerDay(): void
+    {
+        $this->app();
+        $root = $this->root . '/media/leaflet-map/tiles';
+        $old = $this->tokenForPeriod('202001');
+        $this->tile($root . '/' . $old);
+        touch($root . '/.cleanup');
+
+        $this->cleanup();
+
+        $this->assertDirectoryExists($root . '/' . $old);
+    }
+
+    /**
+     * A validly signed token for a map created in the given month (Ym)
+     */
+    private function tokenForPeriod(string $period): string
+    {
+        $payload = $period . ',48.13715,11.57612,48.152,11.592,10,18';
+        $sign = new \ReflectionMethod(TileProxy::class, 'sign');
+
+        return rtrim(strtr(base64_encode($payload), '+/', '-_'), '=') . '.' . $sign->invoke(null, $payload);
+    }
+
+    private function tile(string $tokenDir): void
+    {
+        mkdir($tokenDir . '/10/550', 0777, true);
+        file_put_contents($tokenDir . '/10/550/335.png', 'png');
+    }
+
+    private function cleanup(): void
+    {
+        (new \ReflectionMethod(TileProxy::class, 'cleanup'))->invoke(null);
+    }
 }
