@@ -1,8 +1,9 @@
 <template>
   <k-field
     v-bind="$props"
-    :input="_uid"
-    class="k-leaflet-location-field"
+    :class="['k-leaflet-location-field', $attrs.class]"
+    :input="id"
+    :style="$attrs.style"
   >
     <div class="k-leaflet-field">
       <k-leaflet-address-search v-if="search && !disabled" @select="choose" />
@@ -64,10 +65,13 @@ export default {
 
   data () {
     return {
-      location: normalize(this.value),
-      map: null,
-      marker: null
+      location: normalize(this.value)
     }
+  },
+
+  created () {
+    // not reactive, see the map mixin
+    this.marker = null
   },
 
   watch: {

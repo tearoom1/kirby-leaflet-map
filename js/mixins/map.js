@@ -1,4 +1,5 @@
 import L from 'leaflet'
+import { useId } from 'vue'
 import 'leaflet/dist/leaflet.css'
 
 export const round = (number) => Math.round(number * 1e6) / 1e6
@@ -23,6 +24,11 @@ export default {
   inheritAttrs: false,
 
   props: {
+    // id of the field, links the label to the field
+    id: {
+      type: [Number, String],
+      default: () => useId()
+    },
     label: String,
     help: String,
     name: String,
@@ -34,7 +40,16 @@ export default {
     tiles: Object
   },
 
-  beforeDestroy () {
+  emits: ['input'],
+
+  created () {
+    // Leaflet objects stay outside of data(): as reactive proxies they would
+    // break Leaflet's identity checks and make every map change trigger Vue
+    this.map = null
+    this.resizeObserver = null
+  },
+
+  beforeUnmount () {
     this.resizeObserver?.disconnect()
     this.map?.remove()
   },

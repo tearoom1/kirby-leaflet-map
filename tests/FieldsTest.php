@@ -17,8 +17,8 @@ class FieldsTest extends TestCase
 
     public function testLocationFieldSavesOnlyCompleteLocations(): void
     {
-        $this->assertSame(['lat' => 48.1, 'lng' => 11.5], $this->field('leaflet-location', ['lat' => 48.1, 'lng' => 11.5])->data());
-        $this->assertNull($this->field('leaflet-location', null)->data());
+        $this->assertSame(['lat' => 48.1, 'lng' => 11.5], $this->field('leaflet-location', ['lat' => 48.1, 'lng' => 11.5])->toStoredValue());
+        $this->assertNull($this->field('leaflet-location', null)->toStoredValue());
     }
 
     public function testPathFieldKeepsValidPointsInOrder(): void
@@ -30,8 +30,8 @@ class FieldsTest extends TestCase
         ]);
 
         $this->assertSame([['lat' => 48.1, 'lng' => 11.5], ['lat' => 48.2, 'lng' => 11.6]], $field->value());
-        $this->assertSame([['lat' => 48.1, 'lng' => 11.5], ['lat' => 48.2, 'lng' => 11.6]], $field->data());
-        $this->assertNull($this->field('leaflet-path', [])->data());
+        $this->assertSame([['lat' => 48.1, 'lng' => 11.5], ['lat' => 48.2, 'lng' => 11.6]], $field->toStoredValue());
+        $this->assertNull($this->field('leaflet-path', [])->toStoredValue());
     }
 
     public function testFieldsUseTheTileOptionsAndPanelDefaults(): void
@@ -57,9 +57,14 @@ class FieldsTest extends TestCase
     {
         $this->app($options);
 
-        return new Field($type, [
-            'model' => new Page(['slug' => 'test']),
-            'value' => $value,
-        ]);
+        // blueprint props are passed as named arguments, like Kirby's form does
+        $class = Field::resolve($type);
+
+        return new $class(
+            model: new Page(['slug' => 'test']),
+            name: $type,
+            type: $type,
+            value: $value,
+        );
     }
 }

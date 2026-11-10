@@ -1,5 +1,9 @@
 <template>
-  <k-field v-bind="$props" class="k-leaflet-icon-field">
+  <k-field
+    v-bind="$props"
+    :class="['k-leaflet-icon-field', $attrs.class]"
+    :style="$attrs.style"
+  >
     <div class="k-leaflet-icon-grid" role="radiogroup" :aria-label="label">
       <button
         type="button"

@@ -24,8 +24,8 @@ A map block for Kirby with markers and paths, based on [Leaflet](https://leaflet
 
 ## Requirements
 
-- Kirby 4 or 5
-- PHP 8.1+
+- Kirby 6
+- PHP 8.3+
 
 ## Installation
 

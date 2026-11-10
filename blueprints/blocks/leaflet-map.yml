@@ -25,7 +25,7 @@ tabs:
         when:
           displayMode: popup
         label: Map Thumbnail
-        type: files
+        type: filepicker
         layout: cards
         multiple: false
         size: small

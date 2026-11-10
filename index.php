@@ -5,12 +5,17 @@ load([
     'TearoomOne\\LeafletMap\\TileProxy' => 'src/TileProxy.php',
     'TearoomOne\\LeafletMap\\Geocoder' => 'src/Geocoder.php',
     'TearoomOne\\LeafletMap\\Icons' => 'src/Icons.php',
+    'TearoomOne\\LeafletMap\\Fields\\MapProps' => 'src/Fields/MapProps.php',
+    'TearoomOne\\LeafletMap\\Fields\\IconField' => 'src/Fields/IconField.php',
+    'TearoomOne\\LeafletMap\\Fields\\LocationField' => 'src/Fields/LocationField.php',
+    'TearoomOne\\LeafletMap\\Fields\\PathField' => 'src/Fields/PathField.php',
 ], __DIR__);
 
-use Kirby\Data\Data;
 use Kirby\Data\Yaml;
+use TearoomOne\LeafletMap\Fields\IconField;
+use TearoomOne\LeafletMap\Fields\LocationField;
+use TearoomOne\LeafletMap\Fields\PathField;
 use TearoomOne\LeafletMap\Geocoder;
-use TearoomOne\LeafletMap\Icons;
 use TearoomOne\LeafletMap\TileProxy;
 use TearoomOne\LeafletMap\Utils;
 
@@ -59,60 +64,11 @@ Kirby::plugin('tearoom1/leaflet-map', [
     ],
     'fields' => [
         // Coordinate picker: click on the map or drag the marker
-        'leaflet-location' => [
-            'props' => [
-                'value' => function ($value = null) {
-                    $value = is_array($value) ? $value : Data::decode($value, 'yaml');
-
-                    return is_numeric($value['lat'] ?? null) && is_numeric($value['lng'] ?? null)
-                        ? ['lat' => (float)$value['lat'], 'lng' => (float)$value['lng']]
-                        : null;
-                },
-                // Map center while no location is set: [lat, lng]
-                'center' => fn (array|null $center = null) => $center ?? option('tearoom1.leaflet-map.panel.center', [20, 0]),
-                'zoom' => fn (int|null $zoom = null) => $zoom ?? option('tearoom1.leaflet-map.panel.zoom', 2),
-            ],
-            'computed' => [
-                'search' => fn () => Geocoder::enabled(),
-                'tiles' => fn () => TileProxy::enabled()
-                    ? ['url' => TileProxy::panelUrlTemplate()] + Utils::tiles()
-                    : Utils::tiles(),
-            ],
-            'save' => fn ($value) => is_array($value) && isset($value['lat'], $value['lng']) ? $value : null,
-        ],
-        // Path editor: click on the map to add points, drag or click them to edit
+        'leaflet-location' => LocationField::class,
         // Marker symbol, shown on the color of the location
-        'leaflet-icon' => [
-            'props' => [
-                'value' => fn ($value = null) => Icons::exists($value) ? $value : null,
-            ],
-            'computed' => [
-                'icons' => fn () => Icons::options(),
-            ],
-        ],
-        'leaflet-path' => [
-            'props' => [
-                'value' => function ($value = null) {
-                    $value = is_array($value) ? $value : Data::decode($value, 'yaml');
-
-                    return array_values(array_filter(array_map(
-                        fn ($point) => is_numeric($point['lat'] ?? null) && is_numeric($point['lng'] ?? null)
-                            ? ['lat' => (float)$point['lat'], 'lng' => (float)$point['lng']]
-                            : null,
-                        is_array($value) ? $value : []
-                    )));
-                },
-                'center' => fn (array|null $center = null) => $center ?? option('tearoom1.leaflet-map.panel.center', [20, 0]),
-                'zoom' => fn (int|null $zoom = null) => $zoom ?? option('tearoom1.leaflet-map.panel.zoom', 2),
-            ],
-            'computed' => [
-                'search' => fn () => Geocoder::enabled(),
-                'tiles' => fn () => TileProxy::enabled()
-                    ? ['url' => TileProxy::panelUrlTemplate()] + Utils::tiles()
-                    : Utils::tiles(),
-            ],
-            'save' => fn ($value) => is_array($value) && $value !== [] ? array_values($value) : null,
-        ],
+        'leaflet-icon' => IconField::class,
+        // Path editor: click on the map to add points, drag or click them to edit
+        'leaflet-path' => PathField::class,
     ],
     'api' => [
         'routes' => [
