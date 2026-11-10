@@ -6,6 +6,8 @@ import IconFieldPreview from './components/IconFieldPreview.vue'
 import LocationField from './components/LocationField.vue'
 import LocationFieldPreview from './components/LocationFieldPreview.vue'
 import PathField from './components/PathField.vue'
+import Tooltip from './tooltip.js'
+import './tooltip.css'
 
 panel.plugin('tearoom1/leaflet-map', {
   fields: {
@@ -17,5 +19,8 @@ panel.plugin('tearoom1/leaflet-map', {
     'k-leaflet-address-search': AddressSearch,
     'k-leaflet-icon-field-preview': IconFieldPreview,
     'k-leaflet-location-field-preview': LocationFieldPreview
+  },
+  use: {
+    tooltip: Tooltip
   }
 })

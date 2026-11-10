@@ -40,7 +40,8 @@
           icon="trash"
           size="sm"
           variant="filled"
-          :title="$t('tearoom1.leaflet-map.location.clear')"
+          v-leaflet-tooltip="$t('tearoom1.leaflet-map.location.clear')"
+          :aria-label="$t('tearoom1.leaflet-map.location.clear')"
           @click="clear"
         />
       </div>

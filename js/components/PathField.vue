@@ -31,7 +31,8 @@
             icon="trash"
             size="sm"
             variant="filled"
-            :title="$t('tearoom1.leaflet-map.path.clear')"
+            v-leaflet-tooltip="$t('tearoom1.leaflet-map.path.clear')"
+            :aria-label="$t('tearoom1.leaflet-map.path.clear')"
             @click="clear"
           />
         </k-button-group>

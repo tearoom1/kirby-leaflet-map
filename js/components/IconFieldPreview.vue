@@ -4,7 +4,7 @@
       v-if="icon"
       class="k-leaflet-icon-preview-symbol"
       :style="{ '--marker': color, '--symbol': symbolColor }"
-      :title="icon.label"
+      v-leaflet-tooltip="icon.label"
       v-html="icon.svg"
     />
   </div>

@@ -10,7 +10,8 @@
         role="radio"
         class="k-leaflet-icon-option k-leaflet-icon-none"
         :aria-checked="!value"
-        :title="$t('tearoom1.leaflet-map.icon.none')"
+        v-leaflet-tooltip="$t('tearoom1.leaflet-map.icon.none')"
+        :aria-label="$t('tearoom1.leaflet-map.icon.none')"
         :disabled="disabled"
         @click="select(null)"
       />
@@ -23,7 +24,7 @@
         :style="{ '--marker': color, '--symbol': symbolColor }"
         :aria-checked="value === icon.value"
         :aria-label="icon.label"
-        :title="icon.label"
+        v-leaflet-tooltip="icon.label"
         :disabled="disabled"
         @click="select(icon.value)"
         v-html="icon.svg"
