@@ -24,10 +24,12 @@ A map block for Kirby with markers and paths, based on [Leaflet](https://leaflet
 
 ## Requirements
 
-- Kirby 6
-- PHP 8.3, 8.4 or 8.5
+| Kirby | Plugin version | Branch |
+|---|---|---|
+| 6 | 2.x (since 2.0.0) | `main` |
+| 4 and 5 | 1.x (bug fixes only, latest 1.4.2) | `kirby-5` |
 
-For Kirby 4 and 5, use version 1 of the plugin (`composer require tearoom1/kirby-leaflet-map:^1.4`). It only receives fixes from now on.
+- PHP 8.3, 8.4 or 8.5
 
 ### Upgrading from version 1 (Kirby 5)
 
