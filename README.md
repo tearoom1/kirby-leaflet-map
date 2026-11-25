@@ -31,7 +31,13 @@ For Kirby 4 and 5, use version 1 of the plugin (`composer require tearoom1/kirby
 
 ### Upgrading from version 1 (Kirby 5)
 
-- Update Kirby to version 6 first, then the plugin.
+- Update Kirby and the plugin together. Version 1 refuses Kirby 6 and version 2 refuses Kirby 4 and 5, so Composer cannot update one of them alone. Change both constraints in one command:
+
+  ```bash
+  composer require getkirby/cms:^6.0 tearoom1/kirby-leaflet-map:^2.0 --with-all-dependencies
+  ```
+
+- Without Composer, replace the `kirby` folder and the plugin folder in the same step.
 - Your content keeps working: locations, paths and symbols are stored in the same format as before.
 - Your own blueprints that use the fields `leaflet-location`, `leaflet-path` or `leaflet-icon`, and your own copy of the block blueprint, work without changes.
 
