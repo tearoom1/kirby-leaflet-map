@@ -32,6 +32,8 @@ export default {
     label: String,
     help: String,
     name: String,
+    // passed on to k-field for its k-field-type-* class
+    type: String,
     disabled: Boolean,
     required: Boolean,
     center: Array,
