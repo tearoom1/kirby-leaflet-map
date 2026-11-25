@@ -5,17 +5,36 @@
   --map-primary: #3498db;
   --map-accent: #2ecc71;
   --map-overlay: rgba(0, 0, 0, 0.8);
-  --map-text: var(--color-text, #1d1d1d);
   --map-text-light: var(--color-light, #ffffff);
-  --map-bg: var(--color-background, #f8f6f6);
   --map-font-size-small: 0.8rem;
   --map-font-size-default: 1rem;
+
+  /* text and background are a pair: the defaults follow the color scheme */
+  --map-default-text: #1d1d1d;
+  --map-default-bg: #f8f6f6;
+  --map-text: var(--color-text, var(--map-default-text));
+  --map-bg: var(--color-background, var(--map-default-bg));
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --map-overlay: rgba(0, 0, 0, 0.9);
-    --map-bg: var(--color-background, #121212);
+    /* light text on a dark background, otherwise labels are dark on dark */
+    --map-default-text: #f0f0f0;
+    --map-default-bg: #121212;
+  }
+}
+
+/*
+ * If the theme sets only one of --color-text and --color-background, the other
+ * one is derived from it instead of taken from the color scheme: a theme with
+ * only a white background gets dark text, also in dark mode. Without either,
+ * the result matches the defaults above.
+ */
+@supports (color: oklch(from red l c h)) {
+  :root {
+    --map-text: var(--color-text, oklch(from var(--color-background, var(--map-default-bg)) clamp(0.233, (0.62 - l) * 1000, 0.957) 0 0));
+    --map-bg: var(--color-background, oklch(from var(--color-text, var(--map-default-text)) clamp(0.178, (0.62 - l) * 1000, 0.975) 0 0));
   }
 }
 
