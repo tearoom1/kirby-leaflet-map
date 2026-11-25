@@ -16,6 +16,8 @@
   :root {
     --map-overlay: rgba(0, 0, 0, 0.9);
     --map-bg: var(--color-background, #121212);
+    /* light text on the dark background, otherwise labels are dark on dark */
+    --map-text: var(--color-text, #f0f0f0);
   }
 }
 
