@@ -6,8 +6,6 @@
 * requires Kirby 6 and PHP 8.3. Kirby 4 and 5 are no
 longer supported. Stored content keeps working without changes.
 
-Co-Authored-By: Claude <noreply@anthropic.com>
-
 ### Features
 
 * Kirby 6 support ([83dbdf0](https://github.com/tearoom1/kirby-leaflet-map/commit/83dbdf031a717a906263d22f8b7fbfb8e5dcaf12))
