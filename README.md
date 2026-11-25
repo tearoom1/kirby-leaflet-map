@@ -25,7 +25,15 @@ A map block for Kirby with markers and paths, based on [Leaflet](https://leaflet
 ## Requirements
 
 - Kirby 6
-- PHP 8.3+
+- PHP 8.3, 8.4 or 8.5
+
+For Kirby 4 and 5, use version 1 of the plugin (`composer require tearoom1/kirby-leaflet-map:^1.4`). It only receives fixes from now on.
+
+### Upgrading from version 1 (Kirby 5)
+
+- Update Kirby to version 6 first, then the plugin.
+- Your content keeps working: locations, paths and symbols are stored in the same format as before.
+- Your own blueprints that use the fields `leaflet-location`, `leaflet-path` or `leaflet-icon`, and your own copy of the block blueprint, work without changes.
 
 ## Installation
 
@@ -239,6 +247,17 @@ return [
 | `enabled` | `true` | Set to `false` to stop including the plugin's CSS and JS |
 
 Texts can be changed with Kirby's translations, the keys start with `tearoom1.leaflet-map.`
+
+## Development
+
+The panel fields are built with [kirbyup](https://github.com/johannschopplich/kirbyup) and [pnpm](https://pnpm.io):
+
+```
+pnpm install
+pnpm run build
+```
+
+Tests run with `composer install` and `composer test`.
 
 ## Support
 
