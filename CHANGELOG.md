@@ -1,3 +1,28 @@
+## [2.0.0](https://github.com/tearoom1/kirby-leaflet-map/compare/v1.4.1...v2.0.0) (2026-11-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* requires Kirby 6 and PHP 8.3. Kirby 4 and 5 are no
+longer supported. Stored content keeps working without changes.
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+
+### Features
+
+* Kirby 6 support ([83dbdf0](https://github.com/tearoom1/kirby-leaflet-map/commit/83dbdf031a717a906263d22f8b7fbfb8e5dcaf12))
+* styled tooltips instead of browser titles ([aa93c23](https://github.com/tearoom1/kirby-leaflet-map/commit/aa93c23c7dc42c60f6e5a8826a95b8790057182f))
+
+
+### Bug Fixes
+
+* keep the drawer open when searching an address ([f2321af](https://github.com/tearoom1/kirby-leaflet-map/commit/f2321af5a9faff80467f84cdaecba09fc0e63379))
+* keep the tooltip while hovered or focused and stop its Escape ([1381c0f](https://github.com/tearoom1/kirby-leaflet-map/commit/1381c0f6795c9ce0b487b14d9d76189f456ea7bc))
+* matching text and background colors, hoverable tooltip ([cf4657d](https://github.com/tearoom1/kirby-leaflet-map/commit/cf4657db75b0d3b6b33be204ef007c36d6ff637c))
+* pass the field type on to k-field ([b218de1](https://github.com/tearoom1/kirby-leaflet-map/commit/b218de1bd5c99ad8d513d13b54cc2f52d5e318a5))
+* readable labels in dark mode ([4a91db2](https://github.com/tearoom1/kirby-leaflet-map/commit/4a91db2a1c1154ed9fdccb567fdbfe773bf114ce))
+* show tooltips above dialogs and drawers ([1496bb7](https://github.com/tearoom1/kirby-leaflet-map/commit/1496bb7b1f4d9568c6fbee767e5c9bcc6543108c))
+
 ## [1.4.1](https://github.com/tearoom1/kirby-leaflet-map/compare/v1.4.0...v1.4.1) (2026-10-08)
 
 
@@ -49,11 +74,4 @@
 * reverted to use class loading in index.php ([75634c2](https://github.com/tearoom1/kirby-leaflet-map/commit/75634c2b7574720559cf7c253515f4704bbd0840))
 * screenshot ([1bc2848](https://github.com/tearoom1/kirby-leaflet-map/commit/1bc2848a642019c0a39fe4b44d86b217138d77de))
 * updated composer and autoloading ([c30019c](https://github.com/tearoom1/kirby-leaflet-map/commit/c30019c56e8b66cd11be754d838bfeff90033182))
-
-## [1.1.0](https://github.com/tearoom1/kirby-leaflet-map/compare/d14ffecaef9733f9bd8a4443bed77ec65364aeee...v1.1.0) (2025-07-30)
-
-
-### Features
-
-* zoom levels ([d14ffec](https://github.com/tearoom1/kirby-leaflet-map/commit/d14ffecaef9733f9bd8a4443bed77ec65364aeee))
 
