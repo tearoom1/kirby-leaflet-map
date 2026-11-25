@@ -2,6 +2,8 @@
 
 A map block for Kirby with markers and paths, based on [Leaflet](https://leafletjs.com/) and [OpenStreetMap](https://www.openstreetmap.org/). No API key, no Google, and with an optional tile proxy your visitors never contact a third-party server.
 
+This is the Kirby 4 and 5 line (bug fixes only). For Kirby 6, use version 2 (branch `main`).
+
 [![Screenshot](screenshot.jpg)](https://github.com/tearoom1/kirby-leaflet-map)
 
 ## Features
@@ -24,7 +26,11 @@ A map block for Kirby with markers and paths, based on [Leaflet](https://leaflet
 
 ## Requirements
 
-- Kirby 4 or 5
+| Kirby | Plugin version | Branch |
+|---|---|---|
+| 6 | 2.x (since 2.0.0) | `main` |
+| 4 and 5 | 1.x (bug fixes only, latest 1.4.2) | `kirby-5` |
+
 - PHP 8.1+
 
 ## Installation
