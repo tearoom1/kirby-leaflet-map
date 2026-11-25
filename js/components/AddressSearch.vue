@@ -1,5 +1,6 @@
 <template>
-  <form class="k-leaflet-search" @submit.prevent="find">
+  <!-- .stop: the submit must not reach the form of the surrounding drawer, which would close it -->
+  <form class="k-leaflet-search" @submit.prevent.stop="find">
     <k-input
       type="text"
       icon="search"
