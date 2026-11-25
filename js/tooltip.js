@@ -13,8 +13,16 @@ const EDGE = 8;
 
 const TOOLTIP_ID = 'k-leaflet-map-tooltip';
 
+// time in ms to move the pointer from the trigger across the gap onto the tooltip
+const HIDE_DELAY = 150;
+
 let tooltip = null;
 let activeTrigger = null;
+let tooltipHovered = false;
+let hideTimer = null;
+
+// the trigger that has keyboard focus, its tooltip comes back after hovering others
+let focusedTrigger = null;
 
 /**
  * Where to put the tooltip: under the trigger on its left edge, right-aligned
@@ -62,6 +70,17 @@ function tooltipElement() {
       tooltip.setAttribute('popover', 'manual');
     }
 
+    // the pointer may rest on the tooltip, for example to read or select its text
+    tooltip.addEventListener('pointerenter', () => {
+      tooltipHovered = true;
+      cancelHide();
+    });
+
+    tooltip.addEventListener('pointerleave', () => {
+      tooltipHovered = false;
+      scheduleHide();
+    });
+
     document.body.appendChild(tooltip);
   }
 
@@ -107,6 +126,8 @@ function show(trigger) {
 }
 
 function hide() {
+  cancelHide();
+
   if (!activeTrigger) {
     return;
   }
@@ -116,6 +137,7 @@ function hide() {
   }
 
   tooltip.hidden = true;
+  tooltipHovered = false;
   activeTrigger.removeAttribute('aria-describedby');
   activeTrigger = null;
 
@@ -138,15 +160,45 @@ function onKeydown(event) {
   hide();
 }
 
-/**
- * The tooltip stays while the pointer is over its trigger or keyboard focus
- * is on it, and goes when neither holds.
- */
-function hideUnlessHeld(trigger) {
-  const state = trigger._leafletTooltip;
+function cancelHide() {
+  clearTimeout(hideTimer);
+  hideTimer = null;
+}
 
-  if (activeTrigger === trigger && !state.hovered && !state.focused) {
+/**
+ * The tooltip stays while the pointer is over its trigger or over the tooltip,
+ * or keyboard focus is on the trigger. When none holds, it goes after a short
+ * delay, so the pointer can cross the gap. A trigger that still has focus gets
+ * its tooltip back after another trigger was hovered.
+ */
+function scheduleHide() {
+  cancelHide();
+  hideTimer = setTimeout(settle, HIDE_DELAY);
+}
+
+function settle() {
+  hideTimer = null;
+
+  if (!activeTrigger) {
+    return;
+  }
+
+  const state = activeTrigger._leafletTooltip;
+
+  if (state.hovered || state.focused || tooltipHovered) {
+    return;
+  }
+
+  if (focusedTrigger && focusedTrigger !== activeTrigger && focusedTrigger.isConnected) {
+    show(focusedTrigger);
+  } else {
     hide();
+  }
+}
+
+function hideUnlessHeld(trigger) {
+  if (activeTrigger === trigger) {
+    scheduleHide();
   }
 }
 
@@ -167,12 +219,18 @@ function onFocus(event) {
   // keyboard only, a click must not bring back the tooltip it just closed
   if (event.currentTarget.matches(':focus-visible')) {
     event.currentTarget._leafletTooltip.focused = true;
+    focusedTrigger = event.currentTarget;
     show(event.currentTarget);
   }
 }
 
 function onBlur(event) {
   event.currentTarget._leafletTooltip.focused = false;
+
+  if (focusedTrigger === event.currentTarget) {
+    focusedTrigger = null;
+  }
+
   hideUnlessHeld(event.currentTarget);
 }
 
@@ -232,6 +290,10 @@ const directive = {
   },
 
   beforeUnmount(el) {
+    if (focusedTrigger === el) {
+      focusedTrigger = null;
+    }
+
     if (activeTrigger === el) {
       hide();
     }

@@ -31,7 +31,7 @@ For Kirby 4 and 5, use version 1 of the plugin (`composer require tearoom1/kirby
 
 ### Upgrading from version 1 (Kirby 5)
 
-- Update Kirby and the plugin together. Version 1 refuses Kirby 6 and version 2 refuses Kirby 4 and 5, so Composer cannot update one of them alone. Change both constraints in one command:
+- Update Kirby and the plugin together, with both constraints in one command. Version 2 refuses Kirby 4 and 5, but older 1.x versions do not refuse Kirby 6, so do not rely on Composer to stop you from updating Kirby alone:
 
   ```bash
   composer require getkirby/cms:^6.0 tearoom1/kirby-leaflet-map:^2.0 --with-all-dependencies
